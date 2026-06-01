@@ -34,3 +34,7 @@ venv/
 
 # Local outputs
 outputs/
+
+# Local agent workspace
+.omx/
+.omc/
