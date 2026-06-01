@@ -33,7 +33,8 @@ __pycache__/
 venv/
 
 # Local outputs
-outputs/
+outputs/*.html
+!outputs/.gitkeep
 
 # Local agent workspace
 .omx/
