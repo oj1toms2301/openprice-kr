@@ -34,6 +34,22 @@
 - 가격 출처 링크 표시
 - 샘플 데이터 또는 허가된 데이터 출처 기반 실험
 
+## 첫 MVP 실행 방향
+
+첫 MVP는 `잔티젠` 샘플 데이터를 기준으로 HTML 가격 후보 탐색 리포트를 생성하는 방식입니다.
+
+```powershell
+node scripts/generate-report.js
+```
+
+생성되는 파일:
+
+```text
+outputs/price-report.html
+```
+
+자세한 설명은 [잔티젠 가격 후보 탐색 리포트 MVP](docs/mvp-report-generator.md)를 참고하세요.
+
 ## 데이터 수집 원칙
 
 이 프로젝트는 초기 단계에서 무리한 대규모 크롤링을 목표로 하지 않습니다.
@@ -52,6 +68,7 @@
 
 - [프로젝트 방향](docs/vision.md)
 - [데이터 안전 원칙](docs/data-safety.md)
+- [잔티젠 가격 후보 탐색 리포트 MVP](docs/mvp-report-generator.md)
 
 ## 라이선스
 
