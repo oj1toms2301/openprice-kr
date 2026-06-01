@@ -1,30 +1,30 @@
-# openprice-kr Initial Project Docs Design
+# openprice-kr 초기 프로젝트 문서 설계
 
-## Purpose
+## 목적
 
-`openprice-kr` will start as a small, clear open-source project for Korean shopping price comparison.
+`openprice-kr`는 국내 쇼핑 가격 비교를 위한 작고 명확한 오픈소스 프로젝트로 시작한다.
 
-The first goal is not to build a full app. The first goal is to make the repository understandable and credible on GitHub.
+첫 목표는 완성된 앱을 만드는 것이 아니다. 첫 목표는 GitHub에서 처음 보는 사람도 프로젝트의 방향을 이해하고 신뢰할 수 있게 만드는 것이다.
 
-Plain Korean summary:
+쉬운 설명:
 
-- This project compares Korean shopping prices.
-- It aims to cover gaps that Danawa or Naver price comparison may not fully solve.
-- It will begin carefully, without risky large-scale crawling.
-- The project documents will clearly explain what is known, what is not decided yet, and what comes next.
+- 이 프로젝트는 국내 쇼핑 가격을 비교하는 도구를 목표로 한다.
+- 다나와나 네이버 가격비교만으로 부족할 수 있는 지점을 보완하려고 한다.
+- 초기에는 위험한 대규모 크롤링을 하지 않고 조심스럽게 시작한다.
+- 문서에는 현재 아는 것, 아직 정하지 않은 것, 다음에 할 일을 솔직하게 적는다.
 
-Developer terms:
+개발자 용어:
 
-- repository introduction
-- MVP scope
-- data sourcing policy
-- open-source project positioning
+- 저장소 소개 문서: repository introduction
+- 최소 기능 범위: MVP scope
+- 데이터 수집 원칙: data sourcing policy
+- 오픈소스 프로젝트 포지셔닝: open-source project positioning
 
-## Initial Scope
+## 초기 범위
 
-Create a documentation-first repository foundation.
+이번 단계에서는 문서 중심의 저장소 기초를 만든다.
 
-Files to create in the next implementation step:
+다음 구현 단계에서 만들 파일:
 
 - `README.md`
 - `.gitignore`
@@ -32,73 +32,75 @@ Files to create in the next implementation step:
 - `docs/vision.md`
 - `docs/data-safety.md`
 
-This phase will not create:
+이번 단계에서 만들지 않는 것:
 
-- shopping mall crawling code
-- app UI
-- backend API
-- database schema
-- deployment configuration
-- real product price dataset
+- 쇼핑몰 크롤링 코드
+- 앱 화면
+- 백엔드 API
+- 데이터베이스 구조
+- 배포 설정
+- 실제 상품 가격 데이터셋
 
-## Repository Positioning
+## 저장소 방향
 
-The project should be described as an open-source toolkit or experiment for Korean e-commerce price comparison.
+이 프로젝트는 국내 이커머스 가격 비교를 위한 오픈소스 도구 또는 실험 프로젝트로 설명한다.
 
-It should not claim to already be a finished service.
+아직 완성된 서비스처럼 말하지 않는다.
 
-The README should make the current stage obvious:
+`README.md`에서는 현재 단계를 분명히 보여준다.
 
-- early MVP planning
-- documentation-first setup
-- safe data collection research
-- future sample-data-based comparison flow
+- 초기 MVP 기획 단계
+- 문서 중심의 저장소 준비 단계
+- 안전한 데이터 수집 방식 검토 단계
+- 이후 샘플 데이터 기반 비교 흐름으로 확장 가능
 
-## Data And Safety Direction
+## 데이터와 안전 원칙
 
-The project should avoid promising broad automated scraping at this stage.
+현재 단계에서는 여러 쇼핑몰을 자동으로 넓게 수집한다고 약속하지 않는다.
 
-The first public documentation should say that data collection methods will be reviewed carefully, including:
+첫 공개 문서에서는 데이터 수집 방식을 신중하게 검토하겠다고 설명한다.
 
-- public APIs
-- user-provided URLs
-- sample data
-- permission-friendly sources
-- terms of service and robots.txt considerations
+검토할 수 있는 방식:
 
-The documentation should separate:
+- 공개 API
+- 사용자가 직접 제공한 URL
+- 샘플 데이터
+- 허가 또는 이용 조건이 명확한 출처
+- 서비스 약관과 `robots.txt` 확인
 
-- what the project wants to compare
-- how price data may be collected later
-- what legal or platform risks still need review
+문서에서는 다음을 구분해서 적는다.
 
-## Success Criteria
+- 프로젝트가 비교하고 싶은 대상
+- 나중에 가격 데이터를 수집할 수 있는 방식
+- 아직 검토가 필요한 법적 문제나 플랫폼 약관 리스크
 
-This phase is successful when:
+## 성공 기준
 
-- a new visitor can understand what `openprice-kr` is
-- the repository does not overclaim unfinished features
-- the MVP direction is narrow and practical
-- data collection risk is acknowledged early
-- the project is ready for a later implementation plan
+이번 단계는 다음 조건을 만족하면 성공이다.
 
-## Testing And Verification
+- 처음 방문한 사람이 `openprice-kr`가 무엇인지 이해할 수 있다.
+- 아직 만들지 않은 기능을 과장해서 말하지 않는다.
+- MVP 방향이 작고 현실적이다.
+- 데이터 수집 리스크를 초기에 인정한다.
+- 다음 구현 계획으로 넘어갈 준비가 된다.
 
-Since this phase is documentation-focused, verification will be simple:
+## 검증 방법
 
-- confirm the expected files exist
-- confirm Korean text is saved as UTF-8
-- review the written documents for unclear claims
-- run `git status` to inspect changed files
+이번 단계는 문서 중심 작업이므로 검증도 단순하게 한다.
 
-No app or unit tests are required in this phase because no executable product code will be added.
+- 예상한 파일이 실제로 만들어졌는지 확인한다.
+- 한글이 UTF-8로 정상 저장됐는지 확인한다.
+- 문서에 과한 주장이나 모호한 표현이 없는지 검토한다.
+- `git status`로 변경된 파일을 확인한다.
 
-## Open Decisions For Later
+실행 가능한 제품 코드를 추가하지 않으므로 이번 단계에서는 앱 테스트나 단위 테스트가 필요하지 않다.
 
-These decisions are intentionally left for a later planning step:
+## 나중에 정할 것
 
-- whether the first demo will be a CLI, web app, or static report
-- whether to use sample data first or a public API first
-- which license is best for the project
-- how GitHub issues and contribution rules should be organized
-- whether Council review is needed before choosing a data collection strategy
+다음 결정은 이후 계획 단계에서 정한다.
+
+- 첫 데모를 CLI, 웹 앱, 정적 리포트 중 무엇으로 만들지
+- 샘플 데이터부터 쓸지, 공개 API부터 검토할지
+- 어떤 오픈소스 라이선스를 사용할지
+- GitHub 이슈와 기여 규칙을 어떻게 정리할지
+- 데이터 수집 전략을 정하기 전에 Council 검토가 필요한지
