@@ -60,6 +60,14 @@ function formatWon(value) {
   return `${Number(value).toLocaleString("ko-KR")}원`;
 }
 
+function formatOptionalWon(value) {
+  if (value == null || Number.isNaN(Number(value))) {
+    return "확인 필요";
+  }
+
+  return formatWon(value);
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -183,6 +191,95 @@ function buildReportModel(data) {
   };
 }
 
+function renderIngredientSummary(ingredient) {
+  if (!ingredient) {
+    return "";
+  }
+
+  const claims = Array.isArray(ingredient.claims) ? ingredient.claims : [];
+  const cautions = Array.isArray(ingredient.cautions) ? ingredient.cautions : [];
+  const references = Array.isArray(ingredient.references)
+    ? ingredient.references
+    : [];
+  const reviewSummary = ingredient.reviewSummary || {};
+  const displayName = [ingredient.nameKo, ingredient.nameEn]
+    .filter(Boolean)
+    .join(" / ");
+  const claimItems =
+    claims.length > 0
+      ? claims
+          .map(
+            (claim) => `
+              <li>
+                <strong>${escapeHtml(claim.claim || "근거 항목")}</strong>
+                <span>${escapeHtml(claim.evidenceLevel || "확인 필요")}</span>
+                <p>${escapeHtml(claim.summary || "확인 필요")}</p>
+              </li>
+            `,
+          )
+          .join("\n")
+      : "<li>확인 필요</li>";
+  const cautionItems =
+    cautions.length > 0
+      ? cautions.map((caution) => `<li>${escapeHtml(caution)}</li>`).join("\n")
+      : "<li>확인 필요</li>";
+  const referenceItems =
+    references.length > 0
+      ? references
+          .map((reference) => {
+            const title = reference.title || reference.source || "참고자료";
+            const label = reference.source
+              ? `${title} · ${reference.source}`
+              : title;
+            const link = reference.url
+              ? `<a href="${escapeHtml(reference.url)}">${escapeHtml(label)}</a>`
+              : escapeHtml(label);
+
+            return `
+              <li>
+                ${link}
+                ${reference.note ? `<p>${escapeHtml(reference.note)}</p>` : ""}
+              </li>
+            `;
+          })
+          .join("\n")
+      : "<li>확인 필요</li>";
+
+  return `
+    <section class="ingredient-summary">
+      <header>
+        <p class="eyebrow">영양제 근거 요약</p>
+        <h2>${escapeHtml(displayName || "원료 정보")}</h2>
+        <p>${escapeHtml(ingredient.summary || "확인 필요")}</p>
+      </header>
+      <div class="evidence-grid">
+        <article class="evidence-block">
+          <h3>국내 기능성 원료 인정 여부</h3>
+          <p><strong>${escapeHtml(ingredient.functionalIngredientStatusLabel || "확인 필요")}</strong></p>
+          <p>${escapeHtml(ingredient.functionalIngredientNote || "공식 자료 확인이 필요합니다.")}</p>
+        </article>
+        <article class="evidence-block">
+          <h3>효능/근거 요약</h3>
+          <ul>${claimItems}</ul>
+        </article>
+        <article class="evidence-block">
+          <h3>${escapeHtml(reviewSummary.title || "후기에서 자주 보이는 반응")}</h3>
+          <p>${escapeHtml(reviewSummary.summary || "확인 필요")}</p>
+          <p class="caution">${escapeHtml(reviewSummary.caution || "후기는 개인 경험으로만 참고합니다.")}</p>
+        </article>
+        <article class="evidence-block">
+          <h3>주의사항</h3>
+          <ul>${cautionItems}</ul>
+        </article>
+        <article class="evidence-block evidence-wide">
+          <h3>참고자료</h3>
+          <ul>${referenceItems}</ul>
+        </article>
+      </div>
+    </section>
+  `;
+}
+
 function renderOfferCard(item, isBestOffer) {
   const reviewBadge = item.needsReview
     ? '<span class="badge badge-review">검토 필요</span>'
@@ -190,6 +287,11 @@ function renderOfferCard(item, isBestOffer) {
   const bestBadge = isBestOffer
     ? '<span class="badge badge-best">대표 최저가</span>'
     : "";
+  const unitType = item.unitType || "개";
+  const daysCovered =
+    item.daysCovered == null || Number.isNaN(Number(item.daysCovered))
+      ? "확인 필요"
+      : `${Number(item.daysCovered).toLocaleString("ko-KR")}일`;
 
   return `
     <article class="offer ${isBestOffer ? "offer-best" : ""}">
@@ -202,6 +304,9 @@ function renderOfferCard(item, isBestOffer) {
           <div><dt>상품 가격</dt><dd>${formatWon(item.price)}</dd></div>
           <div><dt>배송비</dt><dd>${formatWon(item.shippingFee)}</dd></div>
           <div><dt>최종가</dt><dd>${formatWon(item.totalPrice)}</dd></div>
+          <div><dt>1${escapeHtml(unitType)}당</dt><dd>${formatOptionalWon(item.unitPrice)}</dd></div>
+          <div><dt>하루 비용</dt><dd>${formatOptionalWon(item.dailyCost)}</dd></div>
+          <div><dt>복용 가능일</dt><dd>${daysCovered}</dd></div>
           <div><dt>매칭 신뢰도</dt><dd>${Math.round(Number(item.matchConfidence || 0) * 100)}%</dd></div>
         </dl>
         <p class="reason">${escapeHtml(item.matchReason)}</p>
@@ -212,6 +317,7 @@ function renderOfferCard(item, isBestOffer) {
 }
 
 function renderHtml(model) {
+  const ingredientSummary = renderIngredientSummary(model.ingredient);
   const groupSections = model.groups
     .map((group) => {
       const reviewText = group.needsReview ? "사람 검토 필요" : "자동 그룹 후보";
@@ -286,6 +392,54 @@ function renderHtml(model) {
       padding: 14px 16px;
       border: 1px solid var(--line);
       background: var(--surface);
+    }
+    .ingredient-summary {
+      margin: 20px 0 28px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .ingredient-summary header {
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+    }
+    .ingredient-summary h2,
+    .ingredient-summary h3 {
+      margin: 0 0 8px;
+    }
+    .ingredient-summary header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    .evidence-block {
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: #fbfcfc;
+    }
+    .evidence-wide {
+      grid-column: 1 / -1;
+    }
+    .evidence-block ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+    .evidence-block li + li {
+      margin-top: 8px;
+    }
+    .evidence-block p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+    .evidence-block span,
+    .caution {
+      color: var(--warn);
+      font-size: 13px;
     }
     .group {
       margin: 22px 0;
@@ -432,6 +586,7 @@ function renderHtml(model) {
       <p>${escapeHtml(model.notice)}</p>
       <p>이 리포트는 실제 쇼핑몰 자동 수집 결과가 아니며, 같은 제품 묶기와 최저가 대표 선택 흐름을 검증하기 위한 예시입니다.</p>
     </section>
+    ${ingredientSummary}
     ${groupSections}
   </main>
 </body>
@@ -481,9 +636,11 @@ module.exports = {
   calculateTotalPrice,
   calculateUnitPrice,
   escapeHtml,
+  formatOptionalWon,
   formatWon,
   generateReport,
   groupItems,
+  renderIngredientSummary,
   renderHtml,
   selectIngredient,
   selectBestOffer,

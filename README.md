@@ -48,6 +48,13 @@ node scripts/generate-report.js
 outputs/price-report.html
 ```
 
+사용하는 공개 요약 샘플 데이터:
+
+```text
+samples/products.json
+samples/ingredients.json
+```
+
 자세한 설명은 [잔티젠 가격 후보 탐색 리포트 MVP](docs/mvp-report-generator.md)를 참고하세요.
 
 ## 데이터 수집 원칙

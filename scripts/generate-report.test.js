@@ -7,6 +7,7 @@ const {
   calculateUnitPrice,
   escapeHtml,
   groupItems,
+  renderHtml,
   selectBestOffer,
 } = require("./generate-report");
 
@@ -136,5 +137,13 @@ assert.equal(model.ingredient.nameKo, "잔티젠");
 assert.equal(model.ingredient.functionalIngredientStatusLabel, "확인 필요");
 assert.equal(model.ingredient.claims[0].claim, "체지방 감소 관련");
 assert.equal(model.ingredient.reviewSummary.title, "후기에서 자주 보이는 반응");
+
+const html = renderHtml(model);
+assert.match(html, /영양제 근거 요약/);
+assert.match(html, /국내 기능성 원료 인정 여부/);
+assert.match(html, /후기에서 자주 보이는 반응/);
+assert.match(html, /하루 비용/);
+assert.match(html, /1캡슐당/);
+assert.doesNotMatch(html, /외부 상세 문서/);
 
 console.log("generate-report tests passed");
