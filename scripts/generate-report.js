@@ -5,6 +5,57 @@ function calculateTotalPrice(item) {
   return Number(item.price) + Number(item.shippingFee || 0);
 }
 
+function calculateUnitPrice(item) {
+  const totalPrice = Number(item?.totalPrice);
+  const unitCount = Number(item?.unitCount);
+
+  if (
+    item?.totalPrice == null ||
+    item?.unitCount == null ||
+    !Number.isFinite(totalPrice) ||
+    !Number.isFinite(unitCount) ||
+    unitCount <= 0
+  ) {
+    return null;
+  }
+
+  return Math.round(totalPrice / unitCount);
+}
+
+function calculateDailyCost(item) {
+  const unitPrice = Number(item?.unitPrice);
+  const dailyServingCount = Number(item?.dailyServingCount);
+
+  if (
+    item?.unitPrice == null ||
+    item?.dailyServingCount == null ||
+    !Number.isFinite(unitPrice) ||
+    !Number.isFinite(dailyServingCount) ||
+    dailyServingCount <= 0
+  ) {
+    return null;
+  }
+
+  return unitPrice * dailyServingCount;
+}
+
+function calculateDaysCovered(item) {
+  const unitCount = Number(item?.unitCount);
+  const dailyServingCount = Number(item?.dailyServingCount);
+
+  if (
+    item?.unitCount == null ||
+    item?.dailyServingCount == null ||
+    !Number.isFinite(unitCount) ||
+    !Number.isFinite(dailyServingCount) ||
+    dailyServingCount <= 0
+  ) {
+    return null;
+  }
+
+  return unitCount / dailyServingCount;
+}
+
 function formatWon(value) {
   return `${Number(value).toLocaleString("ko-KR")}원`;
 }
@@ -19,9 +70,17 @@ function escapeHtml(value) {
 }
 
 function normalizeItem(item) {
+  const totalPrice = calculateTotalPrice(item);
+  const unitPrice = calculateUnitPrice({ ...item, totalPrice });
+  const dailyCost = calculateDailyCost({ ...item, unitPrice });
+  const daysCovered = calculateDaysCovered(item);
+
   return {
     ...item,
-    totalPrice: calculateTotalPrice(item),
+    totalPrice,
+    unitPrice,
+    dailyCost,
+    daysCovered,
   };
 }
 
@@ -83,6 +142,28 @@ function groupItems(items) {
     });
 }
 
+function selectIngredient(data, items) {
+  const ingredients = Array.isArray(data?.ingredients) ? data.ingredients : [];
+  if (ingredients.length === 0) {
+    return null;
+  }
+
+  const ingredientIds = Array.isArray(items)
+    ? items.map((item) => item.ingredientId).filter(Boolean)
+    : [];
+
+  for (const ingredientId of ingredientIds) {
+    const ingredient = ingredients.find(
+      (candidate) => candidate.ingredientId === ingredientId,
+    );
+    if (ingredient) {
+      return ingredient;
+    }
+  }
+
+  return ingredients[0];
+}
+
 function buildReportModel(data) {
   if (!data || typeof data !== "object") {
     throw new TypeError("buildReportModel requires a data object");
@@ -90,12 +171,14 @@ function buildReportModel(data) {
 
   const items = Array.isArray(data.items) ? data.items : [];
   const groups = groupItems(items);
+  const ingredient = selectIngredient(data, items);
 
   return {
     query: data.query || "가격 후보",
     notice: data.notice || "",
     generatedAt: new Date().toISOString(),
     totalItems: items.length,
+    ingredient,
     groups,
   };
 }
@@ -361,10 +444,19 @@ function ensureDirectory(dirPath) {
 
 function generateReport({
   inputPath = path.join("samples", "products.json"),
+  ingredientPath = path.join("samples", "ingredients.json"),
   outputPath = path.join("outputs", "price-report.html"),
 } = {}) {
   const raw = fs.readFileSync(inputPath, "utf8");
   const data = JSON.parse(raw);
+  if (ingredientPath && fs.existsSync(ingredientPath)) {
+    const ingredientRaw = fs.readFileSync(ingredientPath, "utf8");
+    const ingredientData = JSON.parse(ingredientRaw);
+    data.ingredients = Array.isArray(ingredientData.ingredients)
+      ? ingredientData.ingredients
+      : [];
+  }
+
   const model = buildReportModel(data);
   const html = renderHtml(model);
 
@@ -384,11 +476,15 @@ if (require.main === module) {
 
 module.exports = {
   buildReportModel,
+  calculateDailyCost,
+  calculateDaysCovered,
   calculateTotalPrice,
+  calculateUnitPrice,
   escapeHtml,
   formatWon,
   generateReport,
   groupItems,
   renderHtml,
+  selectIngredient,
   selectBestOffer,
 };
