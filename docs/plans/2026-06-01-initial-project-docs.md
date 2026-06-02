@@ -1,7 +1,5 @@
 # 초기 프로젝트 문서 작성 구현 계획
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** `openprice-kr`를 한국 사용자와 기여자가 이해하기 쉬운 문서 중심 오픈소스 저장소로 준비한다.
 
 **Architecture:** 이번 단계는 실행 코드가 없는 문서 중심 구조다. 루트에는 첫 방문자가 보는 기본 문서를 두고, `docs/`에는 프로젝트 방향과 데이터 안전 원칙을 분리해서 둔다.
@@ -375,7 +373,7 @@
   실행:
 
   ```powershell
-  git add README.md .gitignore LICENSE docs/vision.md docs/data-safety.md AGENTS.md docs/superpowers/specs/2026-06-01-initial-project-docs-design.md docs/superpowers/plans/2026-06-01-initial-project-docs.md
+  git add README.md .gitignore LICENSE docs/vision.md docs/data-safety.md AGENTS.md docs/specs/2026-06-01-initial-project-docs-design.md docs/plans/2026-06-01-initial-project-docs.md
   git commit -m "docs: add initial Korean project documentation"
   ```
 

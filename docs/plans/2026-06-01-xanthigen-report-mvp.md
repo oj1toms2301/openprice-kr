@@ -1,7 +1,5 @@
 # 잔티젠 가격 후보 탐색 리포트 MVP Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** 샘플 잔티젠 가격 후보 데이터를 읽어 같은 제품 후보를 묶고, 배송비 포함 최저가 대표 후보를 보여주는 HTML 리포트와 Codex Skill을 만든다.
 
 **Architecture:** 실행 코드는 npm 패키지 없는 Node.js 스크립트 하나로 시작한다. 샘플 데이터는 `samples/products.json`에 두고, 검증용 테스트는 Node 기본 `assert`만 사용하며, 결과물은 `outputs/price-report.html`로 생성한다.
