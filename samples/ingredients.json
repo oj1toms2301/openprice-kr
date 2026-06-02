@@ -1,0 +1,37 @@
+{
+  "ingredients": [
+    {
+      "ingredientId": "xanthigen",
+      "nameKo": "잔티젠",
+      "nameEn": "Xanthigen",
+      "summary": "잔티젠은 체지방 감소 관련 제품에서 자주 언급되는 복합 원료입니다. 공개 요약에서는 가격 비교와 함께 국내 기능성 인정 여부, 근거 수준, 주의사항을 짧게 확인하는 것을 목표로 합니다.",
+      "functionalIngredientStatus": "needs_review",
+      "functionalIngredientStatusLabel": "확인 필요",
+      "functionalIngredientNote": "국내 건강기능식품 기능성 원료 인정 여부는 공식 자료로 추가 확인이 필요합니다.",
+      "claims": [
+        {
+          "claim": "체지방 감소 관련",
+          "evidenceLevel": "검토 필요",
+          "summary": "일부 자료에서 체지방 감소와 관련해 언급되지만, 공개 샘플에서는 효능을 단정하지 않고 근거 확인이 필요한 항목으로 표시합니다."
+        }
+      ],
+      "cautions": [
+        "임신, 수유, 질환 치료 중인 경우 전문가 상담이 필요할 수 있습니다.",
+        "체중 관리 목적의 영양제는 식사, 운동, 생활습관과 함께 판단해야 합니다."
+      ],
+      "reviewSummary": {
+        "title": "후기에서 자주 보이는 반응",
+        "summary": "일부 후기는 체지방 감소 기대, 복용 편의성, 속 불편함 여부를 언급하는 편입니다.",
+        "caution": "후기는 개인 경험이므로 효능 근거로 해석하지 않습니다."
+      },
+      "references": [
+        {
+          "title": "공식 기능성 원료 자료 확인 예정",
+          "source": "공식 자료",
+          "url": "https://example.com/reference-placeholder",
+          "note": "실제 공개 전 공식 출처로 교체합니다."
+        }
+      ]
+    }
+  ]
+}
