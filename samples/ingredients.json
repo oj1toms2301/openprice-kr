@@ -17,17 +17,24 @@
           "note": "국내 건강기능식품 기능성 원료 인정 여부는 공식 자료로 추가 확인이 필요합니다.",
           "sources": [
             "식약처 기능성 원료 자료"
-          ]
+          ],
+          "consumerQuestion": "한국에서 기능성을 공식적으로 말할 수 있나요?",
+          "consumerAnswer": "아직 확인 필요입니다. 식약처 자료로 인정 여부와 표시 가능 문구를 봐야 합니다.",
+          "buyerValue": "제품 상세페이지의 기능성 문구가 공식 표현인지 구분하는 데 도움이 됩니다."
         },
         "usFda": {
           "title": "미국 FDA",
           "label": "FDA 승인 건강표시 확인 필요",
+          "defaultVisible": false,
           "explanation": "미국 FDA는 일반 영양제를 의약품처럼 사전 승인하지 않으며, 여기서는 건강표시 유형을 확인합니다.",
           "note": "Authorized Health Claim 또는 Qualified Health Claim 해당 여부를 확인합니다.",
           "sources": [
             "FDA Authorized Health Claims",
             "FDA Qualified Health Claims"
-          ]
+          ],
+          "consumerQuestion": "FDA에 효능 근거가 있다는 뜻인가요?",
+          "consumerAnswer": "아닙니다. FDA는 일반 영양제를 약처럼 사전 승인하지 않습니다.",
+          "buyerValue": "FDA 승인이라는 표현을 과하게 믿지 않도록 도와줍니다."
         },
         "nihOds": {
           "title": "미국 NIH ODS",
@@ -36,16 +43,23 @@
           "note": "원료별 Fact Sheet 존재 여부를 확인합니다.",
           "sources": [
             "NIH ODS Fact Sheets"
-          ]
+          ],
+          "consumerQuestion": "공공기관 자료에서 이 성분을 설명하나요?",
+          "consumerAnswer": "아직 확인 필요입니다. 성분별 Fact Sheet가 있으면 기본 역할과 주의사항을 참고할 수 있습니다.",
+          "buyerValue": "광고나 후기 말고 공공자료 기반으로 성분을 이해하는 데 도움이 됩니다."
         },
         "usFtc": {
           "title": "미국 FTC",
           "label": "광고 표현 근거 확인 필요",
+          "defaultVisible": false,
           "explanation": "미국 광고 규제 기관 기준으로, 효능을 강하게 주장하는 광고가 충분한 근거를 갖췄는지 봅니다.",
           "note": "체중감량 효과를 단정하는 광고 표현은 별도 근거 확인이 필요합니다.",
           "sources": [
             "FTC Health Products Compliance Guidance"
-          ]
+          ],
+          "consumerQuestion": "광고 문구를 그대로 믿어도 되나요?",
+          "consumerAnswer": "아닙니다. 강한 효능 표현은 그 표현을 뒷받침하는 근거가 있는지 따로 봐야 합니다.",
+          "buyerValue": "체중감량 같은 강한 광고 표현을 조심해서 보는 데 도움이 됩니다."
         }
       },
       "claims": [
@@ -54,6 +68,10 @@
           "evidenceLevel": "검토 필요",
           "summary": "일부 자료에서 체지방 감소와 관련해 언급되지만, 공개 샘플에서는 효능을 단정하지 않고 근거 확인이 필요한 항목으로 표시합니다."
         }
+      ],
+      "priorityCautions": [
+        "질환 치료 중, 임신, 수유, 약물 복용 중인 경우 먼저 전문가 상담이 필요할 수 있습니다.",
+        "체중 관리 목적의 영양제는 특정 성분이 특정 사람에게 맞지 않을 수 있으므로 주의사항을 먼저 확인해야 합니다."
       ],
       "cautions": [
         "임신, 수유, 질환 치료 중인 경우 전문가 상담이 필요할 수 있습니다.",
@@ -70,6 +88,119 @@
           "source": "공식 자료",
           "url": "https://example.com/reference-placeholder",
           "note": "실제 공개 전 공식 출처로 교체합니다."
+        }
+      ]
+    },
+    {
+      "ingredientId": "vitamin-d3",
+      "nameKo": "비타민 D3",
+      "nameEn": "Vitamin D3",
+      "summary": "비타민 D3는 칼슘 흡수와 뼈 건강과 관련해 널리 쓰이는 비타민 D 형태입니다. 공개 요약에서는 제품별 함량, 1정당 가격, 하루 비용과 함께 공식 자료에서 확인할 수 있는 기본 근거를 짧게 보여줍니다.",
+      "functionalIngredientStatus": "mfds_confirmed",
+      "functionalIngredientStatusLabel": "식약처 기능성 내용 확인",
+      "functionalIngredientNote": "식약처 건강기능식품 기능성 내용으로 '칼슘과 인이 흡수되고 이용되는데 필요', '뼈의 형성과 유지에 필요', '골다공증 발생 위험 감소에 도움을 줌'을 확인했습니다.",
+      "regulatoryStatus": {
+        "krMfds": {
+          "title": "한국 식약처",
+          "label": "식약처 기능성 내용 확인",
+          "explanation": "한국 건강기능식품에서 기능성 표시가 공식 인정됐는지 보는 기준입니다.",
+          "note": "확인 문구: 칼슘과 인이 흡수되고 이용되는데 필요, 뼈의 형성과 유지에 필요, 골다공증 발생 위험 감소에 도움을 줌.",
+          "sources": [
+            "식약처 기능성 원료 자료"
+          ],
+          "consumerQuestion": "한국에서 기능성을 공식적으로 말할 수 있나요?",
+          "consumerAnswer": "네. 비타민 D는 식약처 기능성 내용에서 칼슘과 인의 흡수와 이용, 뼈의 형성과 유지, 골다공증 발생 위험 감소 도움과 관련해 확인할 수 있습니다.",
+          "buyerValue": "비타민 D 제품을 볼 때 '뼈 건강' 관련 표현은 공식 문구와 비교해 볼 수 있지만, 피로 회복이나 체중감량 같은 표현은 별도 근거가 필요합니다."
+        },
+        "usFda": {
+          "title": "미국 FDA",
+          "label": "영양제 표시 문구 유형 확인 필요",
+          "defaultVisible": false,
+          "explanation": "미국 FDA는 일반 영양제를 의약품처럼 사전 승인하지 않으며, 여기서는 건강표시, 영양소 함량표시, 구조/기능 표시 중 어떤 유형인지 확인합니다.",
+          "note": "질병 치료나 예방처럼 보이는 표현은 영양제 표시에서 특히 주의가 필요합니다.",
+          "sources": [
+            "FDA Label Claims for Food & Dietary Supplements",
+            "FDA Questions and Answers on Dietary Supplements"
+          ],
+          "consumerQuestion": "FDA에 효능 근거가 있다는 뜻인가요?",
+          "consumerAnswer": "아닙니다. FDA는 일반 영양제를 약처럼 사전 승인하지 않습니다.",
+          "buyerValue": "FDA 승인 제품처럼 보이는 표현을 과하게 믿지 않고, 라벨 문구 유형을 구분하는 데 도움이 됩니다."
+        },
+        "nihOds": {
+          "title": "미국 NIH ODS",
+          "label": "비타민 D 공공 자료 확인됨",
+          "explanation": "미국 국립보건원 산하 영양제 정보 자료로, 비타민 D Fact Sheet가 있어 기본 역할, 섭취량, 주의사항을 확인할 수 있습니다.",
+          "note": "비타민 D3는 제품 함량이 IU로 표시되는 경우가 많아 1정당 함량과 하루 섭취량을 함께 봐야 합니다.",
+          "sources": [
+            "NIH ODS Vitamin D Fact Sheet"
+          ],
+          "consumerQuestion": "공공기관 자료에서 비타민 D를 설명하나요?",
+          "consumerAnswer": "네. NIH ODS 자료에서 비타민 D의 역할, 섭취량, 주의사항을 확인할 수 있습니다.",
+          "buyerValue": "비타민 D3 제품을 볼 때 1정당 IU, 하루 섭취량, 과다 섭취 주의점을 함께 판단하는 데 도움이 됩니다."
+        },
+        "usFtc": {
+          "title": "미국 FTC",
+          "label": "광고 표현 근거 확인 필요",
+          "defaultVisible": false,
+          "explanation": "미국 광고 규제 기관 기준으로, 효능을 강하게 주장하는 광고가 충분한 근거를 갖췄는지 봅니다.",
+          "note": "면역, 피로, 수면 같은 체감 표현은 제품 광고 문맥에 따라 근거 확인이 필요합니다.",
+          "sources": [
+            "FTC Health Products Compliance Guidance"
+          ],
+          "consumerQuestion": "면역, 피로 같은 광고 문구를 그대로 믿어도 되나요?",
+          "consumerAnswer": "아닙니다. 광고 문구가 구체적일수록 그 표현을 뒷받침하는 근거가 필요합니다.",
+          "buyerValue": "비타민 D3 제품의 체감 후기와 광고 표현을 효능 근거처럼 받아들이지 않도록 도와줍니다."
+        }
+      },
+      "claims": [
+        {
+          "claim": "칼슘 흡수와 뼈 건강 관련",
+          "evidenceLevel": "공식 자료 확인 가능",
+          "summary": "식약처는 비타민 D 기능성 내용으로 칼슘과 인의 흡수와 이용, 뼈의 형성과 유지, 골다공증 발생 위험 감소 도움을 제시합니다. NIH ODS도 비타민 D가 칼슘 흡수와 뼈 건강 유지에 관여한다고 설명합니다."
+        },
+        {
+          "claim": "면역 기능 관련",
+          "evidenceLevel": "표현 주의",
+          "summary": "면역 관련 언급은 흔하지만, 제품별 광고 문구가 질병 예방이나 치료처럼 보이지 않는지 별도 확인이 필요합니다."
+        }
+      ],
+      "priorityCautions": [
+        "고칼슘혈증, 신장 질환, 신장결석 병력, 관련 약물 복용 중인 경우 먼저 전문가 상담이 필요할 수 있습니다.",
+        "고함량 비타민 D 제품은 여러 제품을 함께 먹을 때 하루 총섭취량이 쉽게 높아질 수 있으므로 함량을 먼저 확인해야 합니다."
+      ],
+      "cautions": [
+        "고함량 비타민 D는 과다 섭취 위험이 있을 수 있으므로 하루 섭취량을 확인해야 합니다.",
+        "임신, 수유, 신장 질환, 고칼슘혈증, 약물 복용 중인 경우 전문가 상담이 필요할 수 있습니다."
+      ],
+      "reviewSummary": {
+        "title": "후기에서 자주 보이는 반응",
+        "summary": "일부 후기는 피로감, 수면, 햇빛 노출 부족, 건강검진 수치와 관련해 비타민 D를 언급하는 편입니다.",
+        "caution": "후기는 개인 경험이므로 효능 근거로 해석하지 않습니다."
+      },
+      "references": [
+        {
+          "title": "Vitamin D - Consumer Fact Sheet",
+          "source": "NIH ODS",
+          "url": "https://ods.od.nih.gov/factsheets/VitaminD-Consumer/",
+          "note": "소비자용 비타민 D 기본 자료입니다."
+        },
+        {
+          "title": "Label Claims for Food & Dietary Supplements",
+          "source": "FDA",
+          "url": "https://www.fda.gov/food/labeling-nutrition/label-claims",
+          "note": "미국 식품과 영양제 표시 문구 유형을 설명합니다."
+        },
+        {
+          "title": "Questions and Answers on Dietary Supplements",
+          "source": "FDA",
+          "url": "https://www.fda.gov/food/information-consumers-using-dietary-supplements/questions-and-answers-dietary-supplements",
+          "note": "미국 영양제 규제와 FDA 승인 범위를 설명합니다."
+        },
+        {
+          "title": "Health Products Compliance Guidance",
+          "source": "FTC",
+          "url": "https://www.ftc.gov/business-guidance/resources/health-products-compliance-guidance",
+          "note": "건강 관련 제품 광고 표현의 근거 기준을 설명합니다."
         }
       ]
     }
