@@ -156,6 +156,64 @@ function validateIngredients(ingredients) {
       }
     }
 
+    if (ingredient?.clinicalEvidence !== undefined) {
+      const clinicalEvidence = ingredient.clinicalEvidence;
+      if (!clinicalEvidence || typeof clinicalEvidence !== "object") {
+        errors.push(`ingredients[${ingredientIndex}].clinicalEvidence must be an object`);
+      } else {
+        for (const field of ["title", "reviewStatus", "overallJudgment", "summary"]) {
+          if (!hasValue(clinicalEvidence[field])) {
+            errors.push(
+              `ingredients[${ingredientIndex}].clinicalEvidence.${field} is required`,
+            );
+          }
+        }
+
+        for (const field of ["limitations", "plannedFields"]) {
+          if (!Array.isArray(clinicalEvidence[field]) || clinicalEvidence[field].length === 0) {
+            errors.push(
+              `ingredients[${ingredientIndex}].clinicalEvidence.${field} must include at least one item`,
+            );
+          } else {
+            clinicalEvidence[field].forEach((item, itemIndex) => {
+              if (!hasValue(item)) {
+                errors.push(
+                  `ingredients[${ingredientIndex}].clinicalEvidence.${field}[${itemIndex}] is required`,
+                );
+              }
+            });
+          }
+        }
+
+        if (clinicalEvidence.sources !== undefined) {
+          if (!Array.isArray(clinicalEvidence.sources)) {
+            errors.push(`ingredients[${ingredientIndex}].clinicalEvidence.sources must be an array`);
+          } else {
+            clinicalEvidence.sources.forEach((source, sourceIndex) => {
+              if (!source || typeof source !== "object") {
+                errors.push(
+                  `ingredients[${ingredientIndex}].clinicalEvidence.sources[${sourceIndex}] must be an object`,
+                );
+                return;
+              }
+
+              if (!hasValue(source.title) && !hasValue(source.source)) {
+                errors.push(
+                  `ingredients[${ingredientIndex}].clinicalEvidence.sources[${sourceIndex}].title or source is required`,
+                );
+              }
+
+              if (hasValue(source.url) && !/^https?:\/\//.test(String(source.url))) {
+                errors.push(
+                  `ingredients[${ingredientIndex}].clinicalEvidence.sources[${sourceIndex}].url must start with http:// or https://`,
+                );
+              }
+            });
+          }
+        }
+      }
+    }
+
     if (!Array.isArray(ingredient?.references) || ingredient.references.length === 0) {
       errors.push(`ingredients[${ingredientIndex}].references must include at least one reference`);
     }
@@ -339,6 +397,64 @@ function renderRegulatoryStatus(regulatoryStatus) {
   return items || "";
 }
 
+function renderClinicalEvidence(clinicalEvidence) {
+  if (!clinicalEvidence) {
+    return "";
+  }
+
+  const limitations = Array.isArray(clinicalEvidence.limitations)
+    ? clinicalEvidence.limitations
+    : [];
+  const plannedFields = Array.isArray(clinicalEvidence.plannedFields)
+    ? clinicalEvidence.plannedFields
+    : [];
+  const sources = Array.isArray(clinicalEvidence.sources)
+    ? clinicalEvidence.sources
+    : [];
+  const limitationItems =
+    limitations.length > 0
+      ? limitations.map((item) => `<li>${escapeHtml(item)}</li>`).join("\n")
+      : "<li>확인 필요</li>";
+  const plannedFieldItems =
+    plannedFields.length > 0
+      ? plannedFields.map((item) => `<li>${escapeHtml(item)}</li>`).join("\n")
+      : "<li>확인 필요</li>";
+  const sourceItems =
+    sources.length > 0
+      ? sources
+          .map((source) => {
+            const title = source.title || source.source || "참고자료";
+            const label = source.source ? `${title} · ${source.source}` : title;
+            return source.url
+              ? `<li><a href="${escapeHtml(source.url)}">${escapeHtml(label)}</a></li>`
+              : `<li>${escapeHtml(label)}</li>`;
+          })
+          .join("\n")
+      : "";
+
+  return `
+    <article class="evidence-block clinical-evidence evidence-wide">
+      <p class="eyebrow">근거 검토 상태</p>
+      <h3>${escapeHtml(clinicalEvidence.title || "임상시험 근거 요약")}</h3>
+      <p><strong>${escapeHtml(clinicalEvidence.reviewStatus || "검토 예정")}</strong></p>
+      <p class="consumer-answer">${escapeHtml(clinicalEvidence.summary || "임상시험 자료는 별도 검토 후 표시합니다.")}</p>
+      <p><strong>현재 판단</strong> ${escapeHtml(clinicalEvidence.overallJudgment || "판단 보류")}</p>
+      <p class="caution">이 항목은 임상시험 자료가 얼마나 충분한지 확인하기 위한 자리입니다. 효과를 보장하는 정보가 아닙니다.</p>
+      <div class="clinical-evidence-grid">
+        <div>
+          <h4>현재 한계</h4>
+          <ul>${limitationItems}</ul>
+        </div>
+        <div>
+          <h4>향후 확인 항목</h4>
+          <ul>${plannedFieldItems}</ul>
+        </div>
+      </div>
+      ${sourceItems ? `<p class="source-note">참고자료</p><ul>${sourceItems}</ul>` : ""}
+    </article>
+  `;
+}
+
 function renderIngredientSummary(ingredient) {
   if (!ingredient) {
     return "";
@@ -354,6 +470,7 @@ function renderIngredientSummary(ingredient) {
     : [];
   const reviewSummary = ingredient.reviewSummary || {};
   const regulatoryItems = renderRegulatoryStatus(ingredient.regulatoryStatus);
+  const clinicalEvidenceBlock = renderClinicalEvidence(ingredient.clinicalEvidence);
   const displayName = [ingredient.nameKo, ingredient.nameEn]
     .filter(Boolean)
     .join(" / ");
@@ -416,6 +533,7 @@ function renderIngredientSummary(ingredient) {
       <div class="evidence-grid">
         ${priorityCautionBlock}
         ${regulatoryItems}
+        ${clinicalEvidenceBlock}
         <article class="evidence-block">
           <h3>효능/근거 요약</h3>
           <ul>${claimItems}</ul>
@@ -622,6 +740,20 @@ function renderHtml(model) {
     }
     .priority-cautions h3 {
       color: var(--warn);
+    }
+    .clinical-evidence {
+      border-color: #9aa4b2;
+      background: #f5f7f9;
+    }
+    .clinical-evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .clinical-evidence h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
     }
     .group {
       margin: 22px 0;
