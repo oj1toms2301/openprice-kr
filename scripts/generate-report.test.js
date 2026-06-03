@@ -142,6 +142,33 @@ const sampleIngredient = {
     summary: "복용 편의성과 개인별 체감 차이가 함께 언급됩니다.",
     caution: "후기는 개인 경험이므로 효능 근거로 해석하지 않습니다.",
   },
+  clinicalEvidence: {
+    title: "임상시험 근거 요약",
+    reviewStatus: "상세 수치 검토 예정",
+    overallJudgment: "판단 보류",
+    summary:
+      "임상시험의 구체적인 감량 수치, 시험 국가, 참여자 수, 기간, 한계는 별도 검토 후 표시합니다.",
+    limitations: [
+      "현재 공개 샘플에서는 실제 감량 수치를 표시하지 않습니다.",
+      "임상시험 자료는 효과를 보장하는 정보가 아닙니다.",
+    ],
+    plannedFields: [
+      "시험 국가",
+      "참여자 수",
+      "시험 기간",
+      "하루 섭취량",
+      "주요 결과 수치",
+      "한계",
+      "자금 출처 또는 이해상충",
+    ],
+    sources: [
+      {
+        title: "임상시험 원문 검토 예정",
+        source: "공개 논문 또는 임상시험 등록 자료",
+        url: "https://example.com/clinical-review-placeholder",
+      },
+    ],
+  },
   references: [
     {
       title: "공식 기능성 원료 자료 확인 예정",
@@ -208,6 +235,46 @@ assert.throws(
     }),
   /ingredients\[0\]\.summary is required/,
 );
+assert.throws(
+  () =>
+    buildReportModel({
+      query: "잔티젠",
+      items: sampleItems,
+      ingredients: [
+        {
+          ...sampleIngredient,
+          clinicalEvidence: {
+            ...sampleIngredient.clinicalEvidence,
+            limitations: [""],
+          },
+        },
+      ],
+    }),
+  /ingredients\[0\]\.clinicalEvidence\.limitations\[0\] is required/,
+);
+assert.throws(
+  () =>
+    buildReportModel({
+      query: "잔티젠",
+      items: sampleItems,
+      ingredients: [
+        {
+          ...sampleIngredient,
+          clinicalEvidence: {
+            ...sampleIngredient.clinicalEvidence,
+            sources: [
+              {
+                title: "위험한 링크",
+                source: "테스트",
+                url: "javascript:alert(1)",
+              },
+            ],
+          },
+        },
+      ],
+    }),
+  /ingredients\[0\]\.clinicalEvidence\.sources\[0\]\.url must start with http:\/\/ or https:\/\//,
+);
 
 const html = renderHtml(model);
 assert.match(html, /영양제 근거 요약/);
@@ -225,6 +292,15 @@ assert.match(html, /성분별 Fact Sheet가 있으면 근거 요약에 참고합
 assert.doesNotMatch(html, /미국 FTC/);
 assert.match(html, /먼저 확인할 주의사항/);
 assert.match(html, /질환, 임신, 수유, 약물 복용 중이면 먼저 전문가 상담이 필요합니다/);
+assert.match(html, /임상시험 근거 요약/);
+assert.match(html, /상세 수치 검토 예정/);
+assert.match(html, /판단 보류/);
+assert.match(html, /효과를 보장하는 정보가 아닙니다/);
+assert.match(html, /근거 검토 상태/);
+assert.doesNotMatch(html, /구매 신뢰도 판단/);
+assert.match(html, /시험 국가/);
+assert.match(html, /참여자 수/);
+assert.match(html, /자금 출처 또는 이해상충/);
 assert.match(html, /후기에서 자주 보이는 반응/);
 assert.match(html, /하루 비용/);
 assert.match(html, /1캡슐당/);
@@ -263,6 +339,13 @@ assert.match(xanthigenHtml, /600 mg\/일/);
 assert.match(xanthigenHtml, /임산부 및 수유부/);
 assert.match(xanthigenHtml, /석류에 알레르기가 있는 사람/);
 assert.match(xanthigenHtml, /에스트로겐 호르몬에 민감한 사람/);
+assert.match(xanthigenHtml, /임상시험 근거 요약/);
+assert.match(xanthigenHtml, /임상시험 감량 수치/);
+assert.match(xanthigenHtml, /시험 국가/);
+assert.match(xanthigenHtml, /참여자 수/);
+assert.match(xanthigenHtml, /기간/);
+assert.match(xanthigenHtml, /한계/);
+assert.doesNotMatch(xanthigenHtml, /임상시험으로 효과가 입증/);
 assert.doesNotMatch(xanthigenHtml, /미국 NIH ODS/);
 assert.doesNotMatch(xanthigenHtml, /체지방 감소 효과/);
 assert.equal(vitaminD3Model.ingredient.ingredientId, "vitamin-d3");
