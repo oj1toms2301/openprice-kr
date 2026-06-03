@@ -101,6 +101,9 @@ const sampleIngredient = {
     usFda: {
       title: "미국 FDA",
       label: "FDA 승인 건강표시 확인 필요",
+      consumerQuestion: "FDA에 효능 근거가 있다는 뜻인가요?",
+      consumerAnswer: "아닙니다. FDA는 일반 영양제를 약처럼 사전 승인하지 않습니다.",
+      buyerValue: "FDA 승인이라는 표현을 과하게 믿지 않도록 도와줍니다.",
       explanation:
         "미국 FDA는 일반 영양제를 의약품처럼 사전 승인하지 않으며, 여기서는 건강표시 유형을 확인합니다.",
       note: "Authorized Health Claim 또는 Qualified Health Claim 해당 여부를 확인합니다.",
@@ -213,6 +216,9 @@ assert.match(html, /공식 기준 확인 결과/);
 assert.match(html, /한국 식약처/);
 assert.match(html, /한국 건강기능식품에서 기능성 표시가 공식 인정됐는지 보는 기준입니다/);
 assert.match(html, /미국 FDA/);
+assert.match(html, /FDA에 효능 근거가 있다는 뜻인가요/);
+assert.match(html, /아닙니다\. FDA는 일반 영양제를 약처럼 사전 승인하지 않습니다/);
+assert.match(html, /FDA 승인이라는 표현을 과하게 믿지 않도록 도와줍니다/);
 assert.match(html, /일반 영양제를 의약품처럼 사전 승인하지 않으며/);
 assert.match(html, /미국 NIH ODS/);
 assert.match(html, /성분별 Fact Sheet가 있으면 근거 요약에 참고합니다/);
@@ -244,6 +250,8 @@ assert.equal(vitaminD3Model.groups.length, 3);
 assert.match(vitaminD3Html, /비타민 D3 가격 후보 탐색 리포트/);
 assert.match(vitaminD3Html, /1정당 비타민 D3 2,000 IU/);
 assert.match(vitaminD3Html, /비타민 D 공공 자료 확인됨/);
+assert.match(vitaminD3Html, /FDA에 효능 근거가 있다는 뜻인가요/);
+assert.match(vitaminD3Html, /FDA는 일반 영양제를 약처럼 사전 승인하지 않습니다/);
 assert.match(vitaminD3Html, /NIH ODS Vitamin D Fact Sheet/);
 
 console.log("generate-report tests passed");

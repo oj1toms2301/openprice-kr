@@ -295,6 +295,21 @@ function renderRegulatoryStatus(regulatoryStatus) {
           <p class="eyebrow">공식 기준 확인 결과</p>
           <h3>${escapeHtml(item.title)}</h3>
           <p><strong>${escapeHtml(item.label)}</strong></p>
+          ${
+            item.consumerQuestion
+              ? `<p class="consumer-question">${escapeHtml(item.consumerQuestion)}</p>`
+              : ""
+          }
+          ${
+            item.consumerAnswer
+              ? `<p class="consumer-answer">${escapeHtml(item.consumerAnswer)}</p>`
+              : ""
+          }
+          ${
+            item.buyerValue
+              ? `<p><strong>구매할 때 의미</strong> ${escapeHtml(item.buyerValue)}</p>`
+              : ""
+          }
           <p>${escapeHtml(item.explanation)}</p>
           <p>${escapeHtml(item.note)}</p>
           ${
@@ -562,6 +577,17 @@ function renderHtml(model) {
     .source-note {
       color: var(--warn);
       font-size: 13px;
+    }
+    .consumer-question {
+      font-weight: 700;
+      color: var(--text);
+    }
+    .consumer-answer {
+      padding: 8px 10px;
+      border-left: 3px solid var(--accent);
+      background: #eef8f6;
+      color: var(--text);
+      font-weight: 700;
     }
     .group {
       margin: 22px 0;

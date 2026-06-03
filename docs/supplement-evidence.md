@@ -25,7 +25,11 @@
 
 공식 기준 확인 결과에는 한국 식약처, 미국 FDA, 미국 NIH ODS, 미국 FTC 기준을 필요에 따라 표시합니다.
 
-각 기준은 사용자가 따로 공부하지 않아도 이해할 수 있도록, 판정 결과 바로 아래에 `이 기준이 무엇을 보는지`를 한 줄로 함께 적습니다.
+각 기준은 사용자가 따로 공부하지 않아도 이해할 수 있도록, 판정 결과 바로 아래에 다음 세 가지를 함께 적습니다.
+
+- `consumerQuestion`: 사용자가 실제로 궁금해할 질문
+- `consumerAnswer`: 그 질문에 대한 짧은 답
+- `buyerValue`: 구매할 때 이 정보가 왜 도움이 되는지
 
 예시:
 
@@ -79,6 +83,9 @@
 - `functionalIngredientStatusLabel`: 화면에 표시할 상태 문구
 - `functionalIngredientNote`: 인정 여부에 대한 설명
 - `regulatoryStatus`: 한국/미국 공식 기준 확인 결과
+  - `consumerQuestion`: 소비자 관점의 질문
+  - `consumerAnswer`: 질문에 대한 짧은 답
+  - `buyerValue`: 구매 판단에 주는 의미
 - `claims`: 효능/근거 요약 목록
 - `cautions`: 주의사항 목록
 - `reviewSummary`: 후기에서 자주 보이는 반응 요약
