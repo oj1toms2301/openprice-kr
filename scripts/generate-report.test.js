@@ -245,7 +245,26 @@ const vitaminD3Model = buildReportModel({
   ingredients: ingredientData.ingredients,
 });
 const vitaminD3Html = renderHtml(vitaminD3Model);
+const xanthigenModel = buildReportModel({
+  query: "잔티젠",
+  notice: "샘플 데이터",
+  evidenceSchemaVersion: ingredientData.evidenceSchemaVersion,
+  items: sampleItems,
+  ingredients: ingredientData.ingredients,
+});
+const xanthigenHtml = renderHtml(xanthigenModel);
 assert.deepEqual(validateIngredients(ingredientData.ingredients), []);
+assert.equal(xanthigenModel.ingredient.ingredientId, "xanthigen");
+assert.match(xanthigenHtml, /미역 등 복합추출물\(잔티젠\)/);
+assert.match(xanthigenHtml, /제2013-10호/);
+assert.match(xanthigenHtml, /체지방 감소에 도움을 줄 수 있음/);
+assert.match(xanthigenHtml, /생리활성기능 2등급/);
+assert.match(xanthigenHtml, /600 mg\/일/);
+assert.match(xanthigenHtml, /임산부 및 수유부/);
+assert.match(xanthigenHtml, /석류에 알레르기가 있는 사람/);
+assert.match(xanthigenHtml, /에스트로겐 호르몬에 민감한 사람/);
+assert.doesNotMatch(xanthigenHtml, /미국 NIH ODS/);
+assert.doesNotMatch(xanthigenHtml, /체지방 감소 효과/);
 assert.equal(vitaminD3Model.ingredient.ingredientId, "vitamin-d3");
 assert.equal(vitaminD3Model.groups.length, 3);
 assert.match(vitaminD3Html, /비타민 D3 가격 후보 탐색 리포트/);
