@@ -9,6 +9,7 @@ const {
   groupItems,
   renderHtml,
   selectBestOffer,
+  validateIngredients,
 } = require("./generate-report");
 
 const sampleItems = [
@@ -85,6 +86,40 @@ const sampleIngredient = {
   functionalIngredientStatus: "needs_review",
   functionalIngredientStatusLabel: "확인 필요",
   functionalIngredientNote: "공식 자료 확인이 필요한 샘플 원료입니다.",
+  regulatoryStatus: {
+    krMfds: {
+      title: "한국 식약처",
+      label: "국내 기능성 원료 인정 여부 확인 필요",
+      explanation:
+        "한국 건강기능식품에서 기능성 표시가 공식 인정됐는지 보는 기준입니다.",
+      note: "공식 자료 확인이 필요한 샘플 원료입니다.",
+      sources: ["식약처 기능성 원료 자료"],
+    },
+    usFda: {
+      title: "미국 FDA",
+      label: "FDA 승인 건강표시 확인 필요",
+      explanation:
+        "미국 FDA는 일반 영양제를 의약품처럼 사전 승인하지 않으며, 여기서는 건강표시 유형을 확인합니다.",
+      note: "Authorized Health Claim 또는 Qualified Health Claim 해당 여부를 확인합니다.",
+      sources: ["FDA Authorized Health Claims", "FDA Qualified Health Claims"],
+    },
+    nihOds: {
+      title: "미국 NIH ODS",
+      label: "원료별 공공 자료 확인 필요",
+      explanation:
+        "미국 국립보건원 산하 영양제 정보 자료로, 성분별 Fact Sheet가 있으면 근거 요약에 참고합니다.",
+      note: "원료별 Fact Sheet 존재 여부를 확인합니다.",
+      sources: ["NIH ODS Fact Sheets"],
+    },
+    usFtc: {
+      title: "미국 FTC",
+      label: "광고 표현 근거 확인 필요",
+      explanation:
+        "미국 광고 규제 기관 기준으로, 효능을 강하게 주장하는 광고가 충분한 근거를 갖췄는지 봅니다.",
+      note: "체중감량 효과를 단정하는 광고 표현은 별도 근거 확인이 필요합니다.",
+      sources: ["FTC Health Products Compliance Guidance"],
+    },
+  },
   claims: [
     {
       claim: "체지방 감소 관련",
@@ -98,6 +133,14 @@ const sampleIngredient = {
     summary: "복용 편의성과 개인별 체감 차이가 함께 언급됩니다.",
     caution: "후기는 개인 경험이므로 효능 근거로 해석하지 않습니다.",
   },
+  references: [
+    {
+      title: "공식 기능성 원료 자료 확인 예정",
+      source: "공식 자료",
+      url: "https://example.com/reference-placeholder",
+      note: "실제 공개 전 공식 출처로 교체합니다.",
+    },
+  ],
 };
 
 assert.equal(calculateTotalPrice({ price: 28000, shippingFee: 2500 }), 30500);
@@ -126,10 +169,12 @@ assert.equal(bestOffer.daysCovered, 15);
 const model = buildReportModel({
   query: "잔티젠",
   notice: "샘플 데이터",
+  evidenceSchemaVersion: "supplement-evidence-v1",
   items: sampleItems,
   ingredients: [sampleIngredient],
 });
 assert.equal(model.query, "잔티젠");
+assert.equal(model.evidenceSchemaVersion, "supplement-evidence-v1");
 assert.equal(model.totalItems, 3);
 assert.equal(model.groups.length, 2);
 assert.equal(model.groups[0].bestOffer.id, "b");
@@ -137,10 +182,39 @@ assert.equal(model.ingredient.nameKo, "잔티젠");
 assert.equal(model.ingredient.functionalIngredientStatusLabel, "확인 필요");
 assert.equal(model.ingredient.claims[0].claim, "체지방 감소 관련");
 assert.equal(model.ingredient.reviewSummary.title, "후기에서 자주 보이는 반응");
+assert.equal(model.ingredient.regulatoryStatus.usFda.title, "미국 FDA");
+
+assert.deepEqual(validateIngredients([sampleIngredient]), []);
+assert.throws(
+  () =>
+    buildReportModel({
+      query: "잔티젠",
+      items: sampleItems,
+      ingredients: [
+        {
+          ingredientId: "broken",
+          nameKo: "깨진 샘플",
+        },
+      ],
+    }),
+  /ingredients\[0\]\.summary is required/,
+);
 
 const html = renderHtml(model);
 assert.match(html, /영양제 근거 요약/);
+assert.match(html, /근거자료 스키마 v1/);
+assert.match(html, /supplement-evidence-v1/);
+assert.match(html, /의료 조언이 아님/);
 assert.match(html, /국내 기능성 원료 인정 여부/);
+assert.match(html, /공식 기준 확인 결과/);
+assert.match(html, /한국 식약처/);
+assert.match(html, /한국 건강기능식품에서 기능성 표시가 공식 인정됐는지 보는 기준입니다/);
+assert.match(html, /미국 FDA/);
+assert.match(html, /일반 영양제를 의약품처럼 사전 승인하지 않으며/);
+assert.match(html, /미국 NIH ODS/);
+assert.match(html, /성분별 Fact Sheet가 있으면 근거 요약에 참고합니다/);
+assert.match(html, /미국 FTC/);
+assert.match(html, /효능을 강하게 주장하는 광고가 충분한 근거를 갖췄는지 봅니다/);
 assert.match(html, /후기에서 자주 보이는 반응/);
 assert.match(html, /하루 비용/);
 assert.match(html, /1캡슐당/);

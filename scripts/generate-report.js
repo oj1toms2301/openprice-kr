@@ -92,6 +92,87 @@ function normalizeItem(item) {
   };
 }
 
+function hasValue(value) {
+  return value !== undefined && value !== null && String(value).trim() !== "";
+}
+
+function validateIngredients(ingredients) {
+  if (!Array.isArray(ingredients)) {
+    return ["ingredients must be an array"];
+  }
+
+  const errors = [];
+  const requiredIngredientFields = [
+    "ingredientId",
+    "nameKo",
+    "summary",
+    "functionalIngredientStatus",
+    "functionalIngredientStatusLabel",
+    "functionalIngredientNote",
+  ];
+
+  ingredients.forEach((ingredient, ingredientIndex) => {
+    for (const field of requiredIngredientFields) {
+      if (!hasValue(ingredient?.[field])) {
+        errors.push(`ingredients[${ingredientIndex}].${field} is required`);
+      }
+    }
+
+    if (!Array.isArray(ingredient?.claims) || ingredient.claims.length === 0) {
+      errors.push(`ingredients[${ingredientIndex}].claims must include at least one claim`);
+    } else {
+      ingredient.claims.forEach((claim, claimIndex) => {
+        for (const field of ["claim", "evidenceLevel", "summary"]) {
+          if (!hasValue(claim?.[field])) {
+            errors.push(
+              `ingredients[${ingredientIndex}].claims[${claimIndex}].${field} is required`,
+            );
+          }
+        }
+      });
+    }
+
+    for (const field of ["title", "summary", "caution"]) {
+      if (!hasValue(ingredient?.reviewSummary?.[field])) {
+        errors.push(`ingredients[${ingredientIndex}].reviewSummary.${field} is required`);
+      }
+    }
+
+    if (!Array.isArray(ingredient?.cautions) || ingredient.cautions.length === 0) {
+      errors.push(`ingredients[${ingredientIndex}].cautions must include at least one caution`);
+    }
+
+    if (!Array.isArray(ingredient?.references) || ingredient.references.length === 0) {
+      errors.push(`ingredients[${ingredientIndex}].references must include at least one reference`);
+    }
+
+    const regulatoryStatus = ingredient?.regulatoryStatus || {};
+    for (const key of ["krMfds", "usFda", "nihOds", "usFtc"]) {
+      const regulatoryItem = regulatoryStatus[key];
+      if (!regulatoryItem || typeof regulatoryItem !== "object") {
+        errors.push(`ingredients[${ingredientIndex}].regulatoryStatus.${key} is required`);
+        continue;
+      }
+
+      for (const field of ["title", "label", "explanation", "note"]) {
+        if (!hasValue(regulatoryItem[field])) {
+          errors.push(
+            `ingredients[${ingredientIndex}].regulatoryStatus.${key}.${field} is required`,
+          );
+        }
+      }
+
+      if (!Array.isArray(regulatoryItem.sources) || regulatoryItem.sources.length === 0) {
+        errors.push(
+          `ingredients[${ingredientIndex}].regulatoryStatus.${key}.sources must include at least one source`,
+        );
+      }
+    }
+  });
+
+  return errors;
+}
+
 function selectBestOffer(items) {
   if (!Array.isArray(items) || items.length === 0) {
     throw new TypeError("selectBestOffer requires at least one item");
@@ -178,17 +259,55 @@ function buildReportModel(data) {
   }
 
   const items = Array.isArray(data.items) ? data.items : [];
+  const ingredientErrors = validateIngredients(
+    Array.isArray(data.ingredients) ? data.ingredients : [],
+  );
+  if (ingredientErrors.length > 0) {
+    throw new Error(ingredientErrors.join("; "));
+  }
+
   const groups = groupItems(items);
   const ingredient = selectIngredient(data, items);
 
   return {
     query: data.query || "가격 후보",
     notice: data.notice || "",
+    evidenceSchemaVersion: data.evidenceSchemaVersion || "supplement-evidence-v1",
     generatedAt: new Date().toISOString(),
     totalItems: items.length,
     ingredient,
     groups,
   };
+}
+
+function renderRegulatoryStatus(regulatoryStatus) {
+  const orderedKeys = ["krMfds", "usFda", "nihOds", "usFtc"];
+  const items = orderedKeys
+    .map((key) => regulatoryStatus?.[key])
+    .filter(Boolean)
+    .map((item) => {
+      const sourceText = Array.isArray(item.sources)
+        ? item.sources.filter(Boolean).join(", ")
+        : "";
+
+      return `
+        <article class="evidence-block">
+          <p class="eyebrow">공식 기준 확인 결과</p>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p><strong>${escapeHtml(item.label)}</strong></p>
+          <p>${escapeHtml(item.explanation)}</p>
+          <p>${escapeHtml(item.note)}</p>
+          ${
+            sourceText
+              ? `<p class="source-note">출처: ${escapeHtml(sourceText)}</p>`
+              : ""
+          }
+        </article>
+      `;
+    })
+    .join("\n");
+
+  return items || "";
 }
 
 function renderIngredientSummary(ingredient) {
@@ -202,6 +321,7 @@ function renderIngredientSummary(ingredient) {
     ? ingredient.references
     : [];
   const reviewSummary = ingredient.reviewSummary || {};
+  const regulatoryItems = renderRegulatoryStatus(ingredient.regulatoryStatus);
   const displayName = [ingredient.nameKo, ingredient.nameEn]
     .filter(Boolean)
     .join(" / ");
@@ -253,11 +373,7 @@ function renderIngredientSummary(ingredient) {
         <p>${escapeHtml(ingredient.summary || "확인 필요")}</p>
       </header>
       <div class="evidence-grid">
-        <article class="evidence-block">
-          <h3>국내 기능성 원료 인정 여부</h3>
-          <p><strong>${escapeHtml(ingredient.functionalIngredientStatusLabel || "확인 필요")}</strong></p>
-          <p>${escapeHtml(ingredient.functionalIngredientNote || "공식 자료 확인이 필요합니다.")}</p>
-        </article>
+        ${regulatoryItems}
         <article class="evidence-block">
           <h3>효능/근거 요약</h3>
           <ul>${claimItems}</ul>
@@ -437,7 +553,8 @@ function renderHtml(model) {
       color: var(--muted);
     }
     .evidence-block span,
-    .caution {
+    .caution,
+    .source-note {
       color: var(--warn);
       font-size: 13px;
     }
@@ -585,6 +702,7 @@ function renderHtml(model) {
       <strong>샘플 데이터 안내</strong>
       <p>${escapeHtml(model.notice)}</p>
       <p>이 리포트는 실제 쇼핑몰 자동 수집 결과가 아니며, 같은 제품 묶기와 최저가 대표 선택 흐름을 검증하기 위한 예시입니다.</p>
+      <p><strong>근거자료 스키마 v1</strong> (${escapeHtml(model.evidenceSchemaVersion)}): 영양제 효능/근거 요약은 참고용이며 의료 조언이 아님을 전제로 표시합니다.</p>
     </section>
     ${ingredientSummary}
     ${groupSections}
@@ -607,6 +725,8 @@ function generateReport({
   if (ingredientPath && fs.existsSync(ingredientPath)) {
     const ingredientRaw = fs.readFileSync(ingredientPath, "utf8");
     const ingredientData = JSON.parse(ingredientRaw);
+    data.evidenceSchemaVersion =
+      ingredientData.evidenceSchemaVersion || data.evidenceSchemaVersion;
     data.ingredients = Array.isArray(ingredientData.ingredients)
       ? ingredientData.ingredients
       : [];
@@ -644,4 +764,5 @@ module.exports = {
   renderHtml,
   selectIngredient,
   selectBestOffer,
+  validateIngredients,
 };
