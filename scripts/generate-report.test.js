@@ -9,6 +9,7 @@ const {
   groupItems,
   renderHtml,
   selectBestOffer,
+  validateIngredients,
 } = require("./generate-report");
 
 const sampleItems = [
@@ -98,6 +99,14 @@ const sampleIngredient = {
     summary: "복용 편의성과 개인별 체감 차이가 함께 언급됩니다.",
     caution: "후기는 개인 경험이므로 효능 근거로 해석하지 않습니다.",
   },
+  references: [
+    {
+      title: "공식 기능성 원료 자료 확인 예정",
+      source: "공식 자료",
+      url: "https://example.com/reference-placeholder",
+      note: "실제 공개 전 공식 출처로 교체합니다.",
+    },
+  ],
 };
 
 assert.equal(calculateTotalPrice({ price: 28000, shippingFee: 2500 }), 30500);
@@ -126,10 +135,12 @@ assert.equal(bestOffer.daysCovered, 15);
 const model = buildReportModel({
   query: "잔티젠",
   notice: "샘플 데이터",
+  evidenceSchemaVersion: "supplement-evidence-v1",
   items: sampleItems,
   ingredients: [sampleIngredient],
 });
 assert.equal(model.query, "잔티젠");
+assert.equal(model.evidenceSchemaVersion, "supplement-evidence-v1");
 assert.equal(model.totalItems, 3);
 assert.equal(model.groups.length, 2);
 assert.equal(model.groups[0].bestOffer.id, "b");
@@ -138,8 +149,27 @@ assert.equal(model.ingredient.functionalIngredientStatusLabel, "확인 필요");
 assert.equal(model.ingredient.claims[0].claim, "체지방 감소 관련");
 assert.equal(model.ingredient.reviewSummary.title, "후기에서 자주 보이는 반응");
 
+assert.deepEqual(validateIngredients([sampleIngredient]), []);
+assert.throws(
+  () =>
+    buildReportModel({
+      query: "잔티젠",
+      items: sampleItems,
+      ingredients: [
+        {
+          ingredientId: "broken",
+          nameKo: "깨진 샘플",
+        },
+      ],
+    }),
+  /ingredients\[0\]\.summary is required/,
+);
+
 const html = renderHtml(model);
 assert.match(html, /영양제 근거 요약/);
+assert.match(html, /근거자료 스키마 v1/);
+assert.match(html, /supplement-evidence-v1/);
+assert.match(html, /의료 조언이 아님/);
 assert.match(html, /국내 기능성 원료 인정 여부/);
 assert.match(html, /후기에서 자주 보이는 반응/);
 assert.match(html, /하루 비용/);

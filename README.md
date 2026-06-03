@@ -88,6 +88,7 @@ samples/ingredients.json
 
 - [프로젝트 방향](docs/vision.md)
 - [데이터 안전 원칙](docs/data-safety.md)
+- [영양제 근거자료 작성 원칙](docs/supplement-evidence.md)
 - [잔티젠 가격 후보 탐색 리포트 MVP](docs/mvp-report-generator.md)
 - [기여 안내](CONTRIBUTING.md)
 
