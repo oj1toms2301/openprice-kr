@@ -15,7 +15,7 @@
 
 ## 현재 구현
 
-현재 포함된 MVP는 `잔티젠` 샘플 데이터를 기준으로 가격 후보 탐색 리포트를 생성합니다.
+현재 포함된 MVP는 `잔티젠`과 `비타민 D3` 샘플 데이터를 기준으로 가격 후보 탐색 리포트를 생성합니다.
 
 리포트는 다음 정보를 보여줍니다.
 
@@ -47,7 +47,7 @@
 
 ## 첫 MVP 실행 방향
 
-첫 MVP는 `잔티젠` 샘플 데이터를 기준으로 HTML 가격 후보 탐색 리포트를 생성하는 방식입니다.
+첫 MVP는 영양제 샘플 데이터를 기준으로 HTML 가격 후보 탐색 리포트를 생성하는 방식입니다.
 
 저장소 루트에서 실행합니다.
 
@@ -61,14 +61,21 @@ node scripts/generate-report.js
 outputs/price-report.html
 ```
 
+비타민 D3 샘플 리포트는 다음처럼 생성합니다.
+
+```powershell
+node scripts/generate-report.js samples/vitamin-d3-products.json outputs/vitamin-d3-price-report.html
+```
+
 사용하는 공개 요약 샘플 데이터:
 
 ```text
 samples/products.json
+samples/vitamin-d3-products.json
 samples/ingredients.json
 ```
 
-자세한 설명은 [잔티젠 가격 후보 탐색 리포트 MVP](docs/mvp-report-generator.md)를 참고하세요.
+자세한 설명은 [영양제 가격 후보 탐색 리포트 MVP](docs/mvp-report-generator.md)를 참고하세요.
 
 ## 데이터 수집 원칙
 
@@ -89,7 +96,7 @@ samples/ingredients.json
 - [프로젝트 방향](docs/vision.md)
 - [데이터 안전 원칙](docs/data-safety.md)
 - [영양제 근거자료 작성 원칙](docs/supplement-evidence.md)
-- [잔티젠 가격 후보 탐색 리포트 MVP](docs/mvp-report-generator.md)
+- [영양제 가격 후보 탐색 리포트 MVP](docs/mvp-report-generator.md)
 - [기여 안내](CONTRIBUTING.md)
 
 ## Codex Skill

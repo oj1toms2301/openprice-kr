@@ -417,6 +417,11 @@ function renderOfferCard(item, isBestOffer) {
         <h3>${escapeHtml(item.productName)}</h3>
         <p class="source">${escapeHtml(item.source)} · ${escapeHtml(item.packageSize)}</p>
         <dl>
+          ${
+            item.activeIngredientLabel
+              ? `<div><dt>주요 함량</dt><dd>${escapeHtml(item.activeIngredientLabel)}</dd></div>`
+              : ""
+          }
           <div><dt>상품 가격</dt><dd>${formatWon(item.price)}</dd></div>
           <div><dt>배송비</dt><dd>${formatWon(item.shippingFee)}</dd></div>
           <div><dt>최종가</dt><dd>${formatWon(item.totalPrice)}</dd></div>

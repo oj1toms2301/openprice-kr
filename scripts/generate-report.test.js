@@ -1,4 +1,6 @@
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const {
   buildReportModel,
   calculateDailyCost,
@@ -29,6 +31,7 @@ const sampleItems = [
     unitType: "캡슐",
     unitCount: 30,
     dailyServingCount: 2,
+    activeIngredientLabel: "1캡슐당 잔티젠 600mg",
     groupKey: "xanthigen-30caps",
     matchConfidence: 0.9,
     matchReason: "30캡슐",
@@ -218,6 +221,29 @@ assert.match(html, /효능을 강하게 주장하는 광고가 충분한 근거�
 assert.match(html, /후기에서 자주 보이는 반응/);
 assert.match(html, /하루 비용/);
 assert.match(html, /1캡슐당/);
+assert.match(html, /주요 함량/);
+assert.match(html, /1캡슐당 잔티젠 600mg/);
 assert.doesNotMatch(html, /외부 상세 문서/);
+
+const sampleRoot = path.join(__dirname, "..", "samples");
+const ingredientData = JSON.parse(
+  fs.readFileSync(path.join(sampleRoot, "ingredients.json"), "utf8"),
+);
+const vitaminD3Data = JSON.parse(
+  fs.readFileSync(path.join(sampleRoot, "vitamin-d3-products.json"), "utf8"),
+);
+const vitaminD3Model = buildReportModel({
+  ...vitaminD3Data,
+  evidenceSchemaVersion: ingredientData.evidenceSchemaVersion,
+  ingredients: ingredientData.ingredients,
+});
+const vitaminD3Html = renderHtml(vitaminD3Model);
+assert.deepEqual(validateIngredients(ingredientData.ingredients), []);
+assert.equal(vitaminD3Model.ingredient.ingredientId, "vitamin-d3");
+assert.equal(vitaminD3Model.groups.length, 3);
+assert.match(vitaminD3Html, /비타민 D3 가격 후보 탐색 리포트/);
+assert.match(vitaminD3Html, /1정당 비타민 D3 2,000 IU/);
+assert.match(vitaminD3Html, /비타민 D 공공 자료 확인됨/);
+assert.match(vitaminD3Html, /NIH ODS Vitamin D Fact Sheet/);
 
 console.log("generate-report tests passed");
