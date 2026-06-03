@@ -101,6 +101,7 @@ const sampleIngredient = {
     usFda: {
       title: "미국 FDA",
       label: "FDA 승인 건강표시 확인 필요",
+      defaultVisible: false,
       consumerQuestion: "FDA에 효능 근거가 있다는 뜻인가요?",
       consumerAnswer: "아닙니다. FDA는 일반 영양제를 약처럼 사전 승인하지 않습니다.",
       buyerValue: "FDA 승인이라는 표현을 과하게 믿지 않도록 도와줍니다.",
@@ -120,6 +121,7 @@ const sampleIngredient = {
     usFtc: {
       title: "미국 FTC",
       label: "광고 표현 근거 확인 필요",
+      defaultVisible: false,
       explanation:
         "미국 광고 규제 기관 기준으로, 효능을 강하게 주장하는 광고가 충분한 근거를 갖췄는지 봅니다.",
       note: "체중감량 효과를 단정하는 광고 표현은 별도 근거 확인이 필요합니다.",
@@ -133,6 +135,7 @@ const sampleIngredient = {
       summary: "효능을 단정하지 않고 근거 확인이 필요한 항목으로 표시합니다.",
     },
   ],
+  priorityCautions: ["질환, 임신, 수유, 약물 복용 중이면 먼저 전문가 상담이 필요합니다."],
   cautions: ["개인 상태에 따라 전문가 상담이 필요할 수 있습니다."],
   reviewSummary: {
     title: "후기에서 자주 보이는 반응",
@@ -215,15 +218,13 @@ assert.match(html, /국내 기능성 원료 인정 여부/);
 assert.match(html, /공식 기준 확인 결과/);
 assert.match(html, /한국 식약처/);
 assert.match(html, /한국 건강기능식품에서 기능성 표시가 공식 인정됐는지 보는 기준입니다/);
-assert.match(html, /미국 FDA/);
-assert.match(html, /FDA에 효능 근거가 있다는 뜻인가요/);
-assert.match(html, /아닙니다\. FDA는 일반 영양제를 약처럼 사전 승인하지 않습니다/);
-assert.match(html, /FDA 승인이라는 표현을 과하게 믿지 않도록 도와줍니다/);
-assert.match(html, /일반 영양제를 의약품처럼 사전 승인하지 않으며/);
+assert.doesNotMatch(html, /미국 FDA/);
+assert.doesNotMatch(html, /FDA에 효능 근거가 있다는 뜻인가요/);
 assert.match(html, /미국 NIH ODS/);
 assert.match(html, /성분별 Fact Sheet가 있으면 근거 요약에 참고합니다/);
-assert.match(html, /미국 FTC/);
-assert.match(html, /효능을 강하게 주장하는 광고가 충분한 근거를 갖췄는지 봅니다/);
+assert.doesNotMatch(html, /미국 FTC/);
+assert.match(html, /먼저 확인할 주의사항/);
+assert.match(html, /질환, 임신, 수유, 약물 복용 중이면 먼저 전문가 상담이 필요합니다/);
 assert.match(html, /후기에서 자주 보이는 반응/);
 assert.match(html, /하루 비용/);
 assert.match(html, /1캡슐당/);
@@ -249,9 +250,16 @@ assert.equal(vitaminD3Model.ingredient.ingredientId, "vitamin-d3");
 assert.equal(vitaminD3Model.groups.length, 3);
 assert.match(vitaminD3Html, /비타민 D3 가격 후보 탐색 리포트/);
 assert.match(vitaminD3Html, /1정당 비타민 D3 2,000 IU/);
+assert.match(vitaminD3Html, /식약처 기능성 내용 확인/);
+assert.match(vitaminD3Html, /칼슘과 인이 흡수되고 이용되는데 필요/);
+assert.match(vitaminD3Html, /뼈의 형성과 유지에 필요/);
+assert.match(vitaminD3Html, /골다공증 발생 위험 감소에 도움을 줌/);
 assert.match(vitaminD3Html, /비타민 D 공공 자료 확인됨/);
-assert.match(vitaminD3Html, /FDA에 효능 근거가 있다는 뜻인가요/);
-assert.match(vitaminD3Html, /FDA는 일반 영양제를 약처럼 사전 승인하지 않습니다/);
+assert.match(vitaminD3Html, /먼저 확인할 주의사항/);
+assert.match(vitaminD3Html, /고칼슘혈증/);
+assert.match(vitaminD3Html, /신장 질환/);
+assert.doesNotMatch(vitaminD3Html, /FDA에 효능 근거가 있다는 뜻인가요/);
+assert.doesNotMatch(vitaminD3Html, /미국 FTC/);
 assert.match(vitaminD3Html, /NIH ODS Vitamin D Fact Sheet/);
 
 console.log("generate-report tests passed");

@@ -142,6 +142,20 @@ function validateIngredients(ingredients) {
       errors.push(`ingredients[${ingredientIndex}].cautions must include at least one caution`);
     }
 
+    if (ingredient?.priorityCautions !== undefined) {
+      if (!Array.isArray(ingredient.priorityCautions)) {
+        errors.push(`ingredients[${ingredientIndex}].priorityCautions must be an array`);
+      } else {
+        ingredient.priorityCautions.forEach((caution, cautionIndex) => {
+          if (!hasValue(caution)) {
+            errors.push(
+              `ingredients[${ingredientIndex}].priorityCautions[${cautionIndex}] is required`,
+            );
+          }
+        });
+      }
+    }
+
     if (!Array.isArray(ingredient?.references) || ingredient.references.length === 0) {
       errors.push(`ingredients[${ingredientIndex}].references must include at least one reference`);
     }
@@ -284,7 +298,7 @@ function renderRegulatoryStatus(regulatoryStatus) {
   const orderedKeys = ["krMfds", "usFda", "nihOds", "usFtc"];
   const items = orderedKeys
     .map((key) => regulatoryStatus?.[key])
-    .filter(Boolean)
+    .filter((item) => item && item.defaultVisible !== false)
     .map((item) => {
       const sourceText = Array.isArray(item.sources)
         ? item.sources.filter(Boolean).join(", ")
@@ -331,6 +345,9 @@ function renderIngredientSummary(ingredient) {
   }
 
   const claims = Array.isArray(ingredient.claims) ? ingredient.claims : [];
+  const priorityCautions = Array.isArray(ingredient.priorityCautions)
+    ? ingredient.priorityCautions
+    : [];
   const cautions = Array.isArray(ingredient.cautions) ? ingredient.cautions : [];
   const references = Array.isArray(ingredient.references)
     ? ingredient.references
@@ -358,6 +375,15 @@ function renderIngredientSummary(ingredient) {
     cautions.length > 0
       ? cautions.map((caution) => `<li>${escapeHtml(caution)}</li>`).join("\n")
       : "<li>확인 필요</li>";
+  const priorityCautionBlock =
+    priorityCautions.length > 0
+      ? `
+        <article class="evidence-block priority-cautions">
+          <h3>먼저 확인할 주의사항</h3>
+          <ul>${priorityCautions.map((caution) => `<li>${escapeHtml(caution)}</li>`).join("\n")}</ul>
+        </article>
+      `
+      : "";
   const referenceItems =
     references.length > 0
       ? references
@@ -388,6 +414,7 @@ function renderIngredientSummary(ingredient) {
         <p>${escapeHtml(ingredient.summary || "확인 필요")}</p>
       </header>
       <div class="evidence-grid">
+        ${priorityCautionBlock}
         ${regulatoryItems}
         <article class="evidence-block">
           <h3>효능/근거 요약</h3>
@@ -588,6 +615,13 @@ function renderHtml(model) {
       background: #eef8f6;
       color: var(--text);
       font-weight: 700;
+    }
+    .priority-cautions {
+      border-color: var(--warn);
+      background: var(--warn-soft);
+    }
+    .priority-cautions h3 {
+      color: var(--warn);
     }
     .group {
       margin: 22px 0;
