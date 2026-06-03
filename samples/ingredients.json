@@ -9,6 +9,45 @@
       "functionalIngredientStatus": "needs_review",
       "functionalIngredientStatusLabel": "확인 필요",
       "functionalIngredientNote": "국내 건강기능식품 기능성 원료 인정 여부는 공식 자료로 추가 확인이 필요합니다.",
+      "regulatoryStatus": {
+        "krMfds": {
+          "title": "한국 식약처",
+          "label": "국내 기능성 원료 인정 여부 확인 필요",
+          "explanation": "한국 건강기능식품에서 기능성 표시가 공식 인정됐는지 보는 기준입니다.",
+          "note": "국내 건강기능식품 기능성 원료 인정 여부는 공식 자료로 추가 확인이 필요합니다.",
+          "sources": [
+            "식약처 기능성 원료 자료"
+          ]
+        },
+        "usFda": {
+          "title": "미국 FDA",
+          "label": "FDA 승인 건강표시 확인 필요",
+          "explanation": "미국 FDA는 일반 영양제를 의약품처럼 사전 승인하지 않으며, 여기서는 건강표시 유형을 확인합니다.",
+          "note": "Authorized Health Claim 또는 Qualified Health Claim 해당 여부를 확인합니다.",
+          "sources": [
+            "FDA Authorized Health Claims",
+            "FDA Qualified Health Claims"
+          ]
+        },
+        "nihOds": {
+          "title": "미국 NIH ODS",
+          "label": "원료별 공공 자료 확인 필요",
+          "explanation": "미국 국립보건원 산하 영양제 정보 자료로, 성분별 Fact Sheet가 있으면 근거 요약에 참고합니다.",
+          "note": "원료별 Fact Sheet 존재 여부를 확인합니다.",
+          "sources": [
+            "NIH ODS Fact Sheets"
+          ]
+        },
+        "usFtc": {
+          "title": "미국 FTC",
+          "label": "광고 표현 근거 확인 필요",
+          "explanation": "미국 광고 규제 기관 기준으로, 효능을 강하게 주장하는 광고가 충분한 근거를 갖췄는지 봅니다.",
+          "note": "체중감량 효과를 단정하는 광고 표현은 별도 근거 확인이 필요합니다.",
+          "sources": [
+            "FTC Health Products Compliance Guidance"
+          ]
+        }
+      },
       "claims": [
         {
           "claim": "체지방 감소 관련",

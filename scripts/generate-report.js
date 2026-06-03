@@ -145,6 +145,29 @@ function validateIngredients(ingredients) {
     if (!Array.isArray(ingredient?.references) || ingredient.references.length === 0) {
       errors.push(`ingredients[${ingredientIndex}].references must include at least one reference`);
     }
+
+    const regulatoryStatus = ingredient?.regulatoryStatus || {};
+    for (const key of ["krMfds", "usFda", "nihOds", "usFtc"]) {
+      const regulatoryItem = regulatoryStatus[key];
+      if (!regulatoryItem || typeof regulatoryItem !== "object") {
+        errors.push(`ingredients[${ingredientIndex}].regulatoryStatus.${key} is required`);
+        continue;
+      }
+
+      for (const field of ["title", "label", "explanation", "note"]) {
+        if (!hasValue(regulatoryItem[field])) {
+          errors.push(
+            `ingredients[${ingredientIndex}].regulatoryStatus.${key}.${field} is required`,
+          );
+        }
+      }
+
+      if (!Array.isArray(regulatoryItem.sources) || regulatoryItem.sources.length === 0) {
+        errors.push(
+          `ingredients[${ingredientIndex}].regulatoryStatus.${key}.sources must include at least one source`,
+        );
+      }
+    }
   });
 
   return errors;
@@ -257,6 +280,36 @@ function buildReportModel(data) {
   };
 }
 
+function renderRegulatoryStatus(regulatoryStatus) {
+  const orderedKeys = ["krMfds", "usFda", "nihOds", "usFtc"];
+  const items = orderedKeys
+    .map((key) => regulatoryStatus?.[key])
+    .filter(Boolean)
+    .map((item) => {
+      const sourceText = Array.isArray(item.sources)
+        ? item.sources.filter(Boolean).join(", ")
+        : "";
+
+      return `
+        <article class="evidence-block">
+          <p class="eyebrow">공식 기준 확인 결과</p>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p><strong>${escapeHtml(item.label)}</strong></p>
+          <p>${escapeHtml(item.explanation)}</p>
+          <p>${escapeHtml(item.note)}</p>
+          ${
+            sourceText
+              ? `<p class="source-note">출처: ${escapeHtml(sourceText)}</p>`
+              : ""
+          }
+        </article>
+      `;
+    })
+    .join("\n");
+
+  return items || "";
+}
+
 function renderIngredientSummary(ingredient) {
   if (!ingredient) {
     return "";
@@ -268,6 +321,7 @@ function renderIngredientSummary(ingredient) {
     ? ingredient.references
     : [];
   const reviewSummary = ingredient.reviewSummary || {};
+  const regulatoryItems = renderRegulatoryStatus(ingredient.regulatoryStatus);
   const displayName = [ingredient.nameKo, ingredient.nameEn]
     .filter(Boolean)
     .join(" / ");
@@ -319,11 +373,7 @@ function renderIngredientSummary(ingredient) {
         <p>${escapeHtml(ingredient.summary || "확인 필요")}</p>
       </header>
       <div class="evidence-grid">
-        <article class="evidence-block">
-          <h3>국내 기능성 원료 인정 여부</h3>
-          <p><strong>${escapeHtml(ingredient.functionalIngredientStatusLabel || "확인 필요")}</strong></p>
-          <p>${escapeHtml(ingredient.functionalIngredientNote || "공식 자료 확인이 필요합니다.")}</p>
-        </article>
+        ${regulatoryItems}
         <article class="evidence-block">
           <h3>효능/근거 요약</h3>
           <ul>${claimItems}</ul>
@@ -503,7 +553,8 @@ function renderHtml(model) {
       color: var(--muted);
     }
     .evidence-block span,
-    .caution {
+    .caution,
+    .source-note {
       color: var(--warn);
       font-size: 13px;
     }
