@@ -211,6 +211,56 @@ function validateIngredients(ingredients) {
             });
           }
         }
+
+        if (clinicalEvidence.studyFacts !== undefined) {
+          if (!Array.isArray(clinicalEvidence.studyFacts)) {
+            errors.push(
+              `ingredients[${ingredientIndex}].clinicalEvidence.studyFacts must be an array`,
+            );
+          } else {
+            clinicalEvidence.studyFacts.forEach((studyFact, studyFactIndex) => {
+              if (!studyFact || typeof studyFact !== "object") {
+                errors.push(
+                  `ingredients[${ingredientIndex}].clinicalEvidence.studyFacts[${studyFactIndex}] must be an object`,
+                );
+                return;
+              }
+
+              for (const field of ["title", "status", "summary"]) {
+                if (!hasValue(studyFact[field])) {
+                  errors.push(
+                    `ingredients[${ingredientIndex}].clinicalEvidence.studyFacts[${studyFactIndex}].${field} is required`,
+                  );
+                }
+              }
+            });
+          }
+        }
+
+        if (clinicalEvidence.resultComparisons !== undefined) {
+          if (!Array.isArray(clinicalEvidence.resultComparisons)) {
+            errors.push(
+              `ingredients[${ingredientIndex}].clinicalEvidence.resultComparisons must be an array`,
+            );
+          } else {
+            clinicalEvidence.resultComparisons.forEach((resultComparison, resultIndex) => {
+              if (!resultComparison || typeof resultComparison !== "object") {
+                errors.push(
+                  `ingredients[${ingredientIndex}].clinicalEvidence.resultComparisons[${resultIndex}] must be an object`,
+                );
+                return;
+              }
+
+              for (const field of ["group", "xanthigen", "placebo", "difference"]) {
+                if (!hasValue(resultComparison[field])) {
+                  errors.push(
+                    `ingredients[${ingredientIndex}].clinicalEvidence.resultComparisons[${resultIndex}].${field} is required`,
+                  );
+                }
+              }
+            });
+          }
+        }
       }
     }
 
@@ -379,7 +429,7 @@ function renderRegulatoryStatus(regulatoryStatus) {
           }
           ${
             item.buyerValue
-              ? `<p><strong>구매할 때 의미</strong> ${escapeHtml(item.buyerValue)}</p>`
+              ? `<p><strong>살 때 체크할 점</strong> ${escapeHtml(item.buyerValue)}</p>`
               : ""
           }
           <p>${escapeHtml(item.explanation)}</p>
@@ -411,6 +461,12 @@ function renderClinicalEvidence(clinicalEvidence) {
   const sources = Array.isArray(clinicalEvidence.sources)
     ? clinicalEvidence.sources
     : [];
+  const studyFacts = Array.isArray(clinicalEvidence.studyFacts)
+    ? clinicalEvidence.studyFacts
+    : [];
+  const resultComparisons = Array.isArray(clinicalEvidence.resultComparisons)
+    ? clinicalEvidence.resultComparisons
+    : [];
   const limitationItems =
     limitations.length > 0
       ? limitations.map((item) => `<li>${escapeHtml(item)}</li>`).join("\n")
@@ -431,6 +487,57 @@ function renderClinicalEvidence(clinicalEvidence) {
           })
           .join("\n")
       : "";
+  const studyFactItems =
+    studyFacts.length > 0
+      ? studyFacts
+          .map((studyFact) => {
+            const detailItems = [
+              ["출처", studyFact.sourceId],
+              ["상태", studyFact.status],
+              ["대상", studyFact.population],
+              ["참여자", studyFact.participants],
+              ["기간", studyFact.duration],
+              ["설계", studyFact.design],
+              ["지역", studyFact.countryOrRegion],
+              ["결과 수치", studyFact.resultSummary],
+            ]
+              .filter(([, value]) => hasValue(value))
+              .map(
+                ([label, value]) =>
+                  `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`,
+              )
+              .join("\n");
+
+            return `
+              <article class="study-fact">
+                <h4>${escapeHtml(studyFact.title)}</h4>
+                <p>${escapeHtml(studyFact.summary)}</p>
+                <dl>${detailItems}</dl>
+              </article>
+            `;
+          })
+          .join("\n")
+      : "";
+  const choiceGuidanceItems = Array.isArray(clinicalEvidence.choiceGuidance)
+    ? clinicalEvidence.choiceGuidance
+        .map((item) => `<li>${escapeHtml(item)}</li>`)
+        .join("\n")
+    : "";
+  const resultComparisonItems =
+    resultComparisons.length > 0
+      ? resultComparisons
+          .map(
+            (result) => `
+              <tr>
+                <td>${escapeHtml(result.group)}</td>
+                <td>${escapeHtml(result.xanthigen)}</td>
+                <td>${escapeHtml(result.placebo)}</td>
+                <td>${escapeHtml(result.difference)}</td>
+              </tr>
+            `,
+          )
+          .join("\n")
+      : "";
 
   return `
     <article class="evidence-block clinical-evidence evidence-wide">
@@ -438,8 +545,33 @@ function renderClinicalEvidence(clinicalEvidence) {
       <h3>${escapeHtml(clinicalEvidence.title || "임상시험 근거 요약")}</h3>
       <p><strong>${escapeHtml(clinicalEvidence.reviewStatus || "검토 예정")}</strong></p>
       <p class="consumer-answer">${escapeHtml(clinicalEvidence.summary || "임상시험 자료는 별도 검토 후 표시합니다.")}</p>
-      <p><strong>현재 판단</strong> ${escapeHtml(clinicalEvidence.overallJudgment || "판단 보류")}</p>
+      <section class="choice-guidance">
+        <h4>${escapeHtml(clinicalEvidence.choiceTitle || "살지 말지 판단")}</h4>
+        <p><strong>${escapeHtml(clinicalEvidence.overallJudgment || "판단 보류")}</strong></p>
+        ${choiceGuidanceItems ? `<ul>${choiceGuidanceItems}</ul>` : ""}
+      </section>
+      ${
+        resultComparisonItems
+          ? `
+            <section class="result-comparison">
+              <h4>확인된 감량 수치</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th>대상</th>
+                    <th>잔티젠군</th>
+                    <th>위약군</th>
+                    <th>차이</th>
+                  </tr>
+                </thead>
+                <tbody>${resultComparisonItems}</tbody>
+              </table>
+            </section>
+          `
+          : ""
+      }
       <p class="caution">이 항목은 임상시험 자료가 얼마나 충분한지 확인하기 위한 자리입니다. 효과를 보장하는 정보가 아닙니다.</p>
+      ${studyFactItems ? `<div class="study-facts">${studyFactItems}</div>` : ""}
       <div class="clinical-evidence-grid">
         <div>
           <h4>현재 한계</h4>
@@ -754,6 +886,57 @@ function renderHtml(model) {
     .clinical-evidence h4 {
       margin: 0 0 6px;
       font-size: 14px;
+    }
+    .study-facts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .study-fact {
+      padding: 12px;
+      border: 1px solid #c6ccd4;
+      background: #ffffff;
+    }
+    .study-fact h4 {
+      margin: 0 0 6px;
+    }
+    .study-fact dl {
+      margin-top: 8px;
+    }
+    .choice-guidance {
+      margin: 12px 0;
+      padding: 12px;
+      border: 1px solid #0f766e;
+      background: #eef8f6;
+    }
+    .choice-guidance h4 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+    .choice-guidance ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+    .result-comparison {
+      margin-top: 12px;
+      overflow-x: auto;
+    }
+    .result-comparison table {
+      width: 100%;
+      min-width: 620px;
+      border-collapse: collapse;
+      background: #ffffff;
+    }
+    .result-comparison th,
+    .result-comparison td {
+      border: 1px solid #c6ccd4;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .result-comparison th {
+      background: #eef1f4;
     }
     .group {
       margin: 22px 0;

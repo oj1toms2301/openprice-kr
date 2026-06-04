@@ -275,6 +275,30 @@ assert.throws(
     }),
   /ingredients\[0\]\.clinicalEvidence\.sources\[0\]\.url must start with http:\/\/ or https:\/\//,
 );
+assert.throws(
+  () =>
+    buildReportModel({
+      query: "잔티젠",
+      items: sampleItems,
+      ingredients: [
+        {
+          ...sampleIngredient,
+          clinicalEvidence: {
+            ...sampleIngredient.clinicalEvidence,
+            resultComparisons: [
+              {
+                group: "지방간군",
+                xanthigen: "잔티젠군 -6.9kg",
+                placebo: "",
+                difference: "차이 -5.5kg",
+              },
+            ],
+          },
+        },
+      ],
+    }),
+  /ingredients\[0\]\.clinicalEvidence\.resultComparisons\[0\]\.placebo is required/,
+);
 
 const html = renderHtml(model);
 assert.match(html, /영양제 근거 요약/);
@@ -340,12 +364,30 @@ assert.match(xanthigenHtml, /임산부 및 수유부/);
 assert.match(xanthigenHtml, /석류에 알레르기가 있는 사람/);
 assert.match(xanthigenHtml, /에스트로겐 호르몬에 민감한 사람/);
 assert.match(xanthigenHtml, /임상시험 근거 요약/);
-assert.match(xanthigenHtml, /임상시험 감량 수치/);
-assert.match(xanthigenHtml, /시험 국가/);
-assert.match(xanthigenHtml, /참여자 수/);
-assert.match(xanthigenHtml, /기간/);
-assert.match(xanthigenHtml, /한계/);
+assert.match(xanthigenHtml, /제한적 근거/);
+assert.match(xanthigenHtml, /살지 말지 판단/);
+assert.match(xanthigenHtml, /비싸면 신중/);
+assert.match(xanthigenHtml, /PMID 19840063/);
+assert.match(xanthigenHtml, /151명/);
+assert.match(xanthigenHtml, /16주/);
+assert.match(xanthigenHtml, /비당뇨 비만 폐경 전 여성/);
+assert.match(xanthigenHtml, /무작위·이중눈가림·위약대조/);
+assert.match(xanthigenHtml, /지방간군/);
+assert.match(xanthigenHtml, /잔티젠군 -6.9kg/);
+assert.match(xanthigenHtml, /위약군 -1.4kg/);
+assert.match(xanthigenHtml, /차이 -5.5kg/);
+assert.match(xanthigenHtml, /간 지방 정상군/);
+assert.match(xanthigenHtml, /잔티젠군 약 -6.3kg/);
+assert.match(xanthigenHtml, /차이 -4.9kg/);
+assert.match(xanthigenHtml, /NCT07519980/);
+assert.match(xanthigenHtml, /모집 중/);
+assert.match(xanthigenHtml, /180명/);
+assert.match(xanthigenHtml, /결과 미게시/);
+assert.match(xanthigenHtml, /이 수치만 보고 사기에는 아직 부족합니다/);
 assert.doesNotMatch(xanthigenHtml, /임상시험으로 효과가 입증/);
+assert.doesNotMatch(xanthigenHtml, /확실한 감량/);
+assert.doesNotMatch(xanthigenHtml, /구매해도 됩니다/);
+assert.doesNotMatch(xanthigenHtml, /구매할 때 의미/);
 assert.doesNotMatch(xanthigenHtml, /미국 NIH ODS/);
 assert.doesNotMatch(xanthigenHtml, /체지방 감소 효과/);
 assert.equal(vitaminD3Model.ingredient.ingredientId, "vitamin-d3");
