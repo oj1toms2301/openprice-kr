@@ -87,21 +87,81 @@
       },
       "clinicalEvidence": {
         "title": "임상시험 근거 요약",
-        "reviewStatus": "상세 수치 검토 예정",
-        "overallJudgment": "판단 보류",
-        "summary": "잔티젠의 임상시험 감량 수치, 시험 국가, 참여자 수, 기간, 한계는 별도 검토 후 표시합니다. 현재 공개 샘플에서는 식약처 기능성 내용과 주의사항을 우선 확인합니다.",
+        "reviewStatus": "제한적 근거",
+        "choiceTitle": "살지 말지 판단",
+        "overallJudgment": "비싸면 신중",
+        "summary": "151명, 16주 연구에서는 잔티젠군이 위약군보다 더 많이 감량했습니다. 다만 연구가 1건 중심이고 대상이 특정 조건의 여성이라, 이 수치만 보고 사기에는 아직 부족합니다.",
+        "choiceGuidance": [
+          "식약처 기능성은 확인됐지만, 임상근거는 아직 넉넉하지 않습니다.",
+          "가격이 비싸면 바로 사기보다 다른 성분이나 제품과 비교하는 편이 낫습니다.",
+          "후속 연구 결과가 나오면 판단이 달라질 수 있습니다."
+        ],
+        "resultComparisons": [
+          {
+            "group": "지방간군",
+            "xanthigen": "잔티젠군 -6.9kg",
+            "placebo": "위약군 -1.4kg",
+            "difference": "차이 -5.5kg"
+          },
+          {
+            "group": "간 지방 정상군",
+            "xanthigen": "잔티젠군 약 -6.3kg",
+            "placebo": "위약군 약 -1.4kg",
+            "difference": "차이 -4.9kg"
+          }
+        ],
+        "studyFacts": [
+          {
+            "title": "게시된 임상시험",
+            "sourceId": "PMID 19840063",
+            "status": "논문 게시",
+            "population": "비당뇨 비만 폐경 전 여성",
+            "participants": "151명",
+            "duration": "16주",
+            "design": "무작위·이중눈가림·위약대조",
+            "countryOrRegion": "연구기관: 러시아 소속 저자 확인, 수행 지역은 추가 확인 필요",
+            "resultSummary": "잔티젠군이 위약군보다 더 많이 감량",
+            "summary": "체중과 체지방 변화를 본 연구입니다. 수치는 좋아 보이지만, 연구가 1건 중심이라 반복 확인이 필요합니다."
+          },
+          {
+            "title": "진행 중인 후속 연구",
+            "sourceId": "NCT07519980",
+            "status": "모집 중, 결과 미게시",
+            "population": "과체중 또는 비만 성인",
+            "participants": "예정 180명",
+            "duration": "16주",
+            "design": "무작위·대조·삼중눈가림, 위약/300 mg/600 mg 3군",
+            "countryOrRegion": "스페인",
+            "resultSummary": "결과 미게시",
+            "summary": "ClinicalTrials.gov 등록 기준으로 2026년에 시작된 연구입니다. 결과가 게시되기 전까지는 기존 근거를 강화하는 자료로 보지 않습니다."
+          }
+        ],
         "limitations": [
-          "현재 공개 샘플에서는 실제 감량 수치를 표시하지 않습니다.",
-          "임상시험 자료는 효과를 보장하는 정보가 아니며, 연구 규모와 한계를 함께 봐야 합니다."
+          "확인된 게시 연구는 특정 조건의 여성 151명을 대상으로 한 16주 연구입니다.",
+          "후속 연구는 모집 중이며 아직 결과가 게시되지 않았습니다.",
+          "위 수치는 평균값입니다. 개인에게 같은 결과가 난다는 뜻은 아닙니다."
         ],
         "plannedFields": [
-          "시험 국가",
-          "참여자 수",
-          "시험 기간",
           "하루 섭취량",
-          "주요 결과 수치",
-          "한계",
+          "감량 수치의 실제 의미",
           "자금 출처 또는 이해상충"
+        ],
+        "sources": [
+          {
+            "title": "The effects of Xanthigen in the weight management of obese premenopausal women",
+            "source": "PubMed",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/19840063/"
+          },
+          {
+            "title": "Xanthigen and Its Impact on Weight and Metabolic Health",
+            "source": "ClinicalTrials.gov",
+            "url": "https://clinicaltrials.gov/study/NCT07519980"
+          },
+          {
+            "title": "Dietary Supplements for Weight Loss - Health Professional Fact Sheet",
+            "source": "NIH ODS",
+            "url": "https://ods.od.nih.gov/factsheets/WeightLoss-HealthProfessional/"
+          }
         ]
       },
       "references": [
