@@ -40,10 +40,32 @@ node scripts/generate-report.js samples/vitamin-d3-products.json outputs/vitamin
 outputs/vitamin-d3-price-report.html
 ```
 
+## 사용자가 직접 제공한 URL 후보 비교
+
+자동 크롤링을 하기 전에는 사용자가 직접 확인한 상품 URL, 가격, 배송비를 입력 파일로 정리해서 비교할 수 있습니다.
+
+저장소 루트에서 실행합니다.
+
+```powershell
+cd C:\vcoding-projects\openprice-kr
+node scripts/convert-url-candidates.js samples/url-candidates.json outputs/url-candidates-products.json
+node scripts/generate-report.js outputs/url-candidates-products.json outputs/url-candidates-report.html
+```
+
+생성되는 파일:
+
+```text
+outputs/url-candidates-products.json
+outputs/url-candidates-report.html
+```
+
+`samples/url-candidates.json`은 실제 쇼핑몰 자동 수집 결과가 아닙니다. 사용자가 직접 확인한 상품명, 쇼핑몰, 가격, 배송비, URL을 기존 리포트 입력 형식으로 바꾸는 샘플입니다.
+
 ## 포함된 샘플
 
 - `samples/products.json`: 잔티젠 샘플 상품 후보
 - `samples/vitamin-d3-products.json`: 비타민 D3 샘플 상품 후보
+- `samples/url-candidates.json`: 사용자가 직접 확인한 URL 후보 입력 샘플
 - `samples/ingredients.json`: 영양제 원료별 간단한 효능/근거 요약
 
 ## 현재 한계

@@ -34,6 +34,7 @@ venv/
 
 # Local outputs
 outputs/*.html
+outputs/*.json
 !outputs/.gitkeep
 
 # Local agent workspace

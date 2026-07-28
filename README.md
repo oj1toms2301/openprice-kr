@@ -67,11 +67,20 @@ outputs/price-report.html
 node scripts/generate-report.js samples/vitamin-d3-products.json outputs/vitamin-d3-price-report.html
 ```
 
+사용자가 직접 확인한 상품 URL 후보를 비교하려면 먼저 URL 후보 입력을 리포트 입력 형식으로 변환합니다.
+
+```powershell
+cd C:\vcoding-projects\openprice-kr
+node scripts/convert-url-candidates.js samples/url-candidates.json outputs/url-candidates-products.json
+node scripts/generate-report.js outputs/url-candidates-products.json outputs/url-candidates-report.html
+```
+
 사용하는 공개 요약 샘플 데이터:
 
 ```text
 samples/products.json
 samples/vitamin-d3-products.json
+samples/url-candidates.json
 samples/ingredients.json
 ```
 
